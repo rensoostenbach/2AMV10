@@ -1,0 +1,4 @@
+/data/*
+# Editors
+.vscode/
+.idea/
