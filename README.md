@@ -21,4 +21,5 @@ Navigate to the folder where this repo is in, and run the following bash code to
 streamlit run app.py
 ```
 
-Make sure to have the data in your repo folder as well, since we do not host it on Github. It should be in a map named "data".
+Make sure to have the data in your repo folder as well, since we do not host it on Github. It should be in a map named
+"data/raw", and the processed images should be in "data/processed".

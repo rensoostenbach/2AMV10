@@ -1,28 +1,27 @@
-import pandas as pd
-import numpy as np
 import streamlit as st
-import random
-from PIL import Image
+import awesome_streamlit as ast
+
+import pages.home
 
 """
 # My first app
 We will show some stuff about the data first:
 """
 
-df = pd.DataFrame({"first column": [1, 2, 3, 4], "second column": [10, 20, 30, 40]})
+PAGES = {
+    "Home": pages.home,
+}
 
-st.write(df)
+def main():
+    """Main function of the App"""
+    st.sidebar.title("Navigation")
+    selection = st.sidebar.radio("Go to", list(PAGES.keys()))
 
-option = st.sidebar.selectbox("Which number do you like best?", df["first column"])
+    page = PAGES[selection]
 
-st.write("You selected:", option)
+    with st.spinner(f"Loading {selection} ..."):
+        ast.shared.components.write_page(page)
 
-st.write("Let's show a random picture and the associated csv file with it.")
-person_number = random.randint(1,40)
-file_number = random.randint(1,5)
 
-image = Image.open(f"data/Person{person_number}/Person{person_number}_{file_number}.jpg")
-st.image(image, caption="Random picture", use_column_width=True)
-
-csv = pd.read_csv(f"data/Person{person_number}/Person{person_number}_{file_number}.csv")
-st.write(csv)
+if __name__ == "__main__":
+    main()
