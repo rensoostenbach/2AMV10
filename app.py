@@ -1,7 +1,7 @@
 import streamlit as st
 import awesome_streamlit as ast
 
-import pages.home
+import pages.vis_model_pred
 
 """
 # My first app
@@ -9,7 +9,7 @@ We will show some stuff about the data first:
 """
 
 PAGES = {
-    "Home": pages.home,
+    "Visualization of predictions": pages.vis_model_pred,
 }
 
 def main():
