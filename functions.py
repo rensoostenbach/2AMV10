@@ -17,14 +17,14 @@ COLORS = [
 ]
 
 
-def draw_bbox(img, csv):
+def draw_bbox(img, df):
     with Image.open(img) as image:
         # create rectangle image
         im_arr = np.asarray(image)
         # convert rgb array to opencv's bgr format
         im_arr_bgr = cv2.cvtColor(im_arr, cv2.COLOR_RGB2BGR)
         width = im_arr_bgr.shape[1]
-        for index, row in csv.iterrows():
+        for index, row in df.iterrows():
             # Draw bounding box
             cv2.rectangle(
                 img=im_arr_bgr,
