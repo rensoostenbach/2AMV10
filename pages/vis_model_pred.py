@@ -7,6 +7,8 @@ import glob
 
 
 def write():
+    # TODO: Let user choose between visualising training images and real images. For training images, do HOG Features.
+
     # Let user decide person number
     person_number = st.sidebar.selectbox("Choose person number (1-40)", list(range(1, 41)))
 
