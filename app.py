@@ -2,14 +2,11 @@ import streamlit as st
 import awesome_streamlit as ast
 
 import pages.home
-
-"""
-# My first app
-We will show some stuff about the data first:
-"""
+import pages.relations_visualizations
 
 PAGES = {
     "Home": pages.home,
+    "People": pages.relations_visualizations,
 }
 
 def main():
