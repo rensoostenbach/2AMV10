@@ -2,6 +2,9 @@ import numpy as np
 from PIL import Image
 import cv2
 from math import ceil
+from skimage.feature import hog
+from skimage import exposure
+from skimage.color import rgb2gray
 
 COLORS = [
     (123, 140, 191),
@@ -47,3 +50,13 @@ def draw_bbox(img, df):
         # convert back to Image object
         bbox_image = Image.fromarray(im_arr)
         return image, bbox_image
+
+
+def visualize_hog(img, pixels_per_cell):
+    with Image.open(img) as image:
+        fd, hog_image = hog(image, orientations=8, pixels_per_cell=pixels_per_cell,
+                            cells_per_block=(1, 1), visualize=True, multichannel=True)
+        # Rescale histogram for better display
+        hog_image_rescaled = exposure.rescale_intensity(hog_image, in_range=(0, 10))
+        hog_image_rescaled = rgb2gray(hog_image_rescaled)
+    return hog_image_rescaled
