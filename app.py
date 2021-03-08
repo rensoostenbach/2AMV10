@@ -1,12 +1,14 @@
 import streamlit as st
 import awesome_streamlit as ast
 
+
 import pages.vis_model_pred
 
 st.set_page_config(layout="wide")
 
 PAGES = {
     "Visualization of predictions": pages.vis_model_pred,
+    "People": pages.relations_visualizations,
 }
 
 def main():
