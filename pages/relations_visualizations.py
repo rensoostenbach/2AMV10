@@ -15,11 +15,19 @@ def write():
 
     persons = Person.getPersonsFrom(data_folder)
 
-    print(persons[0].images)
-
     st.markdown("""
-            # People and their relation to objects
-            """)
+                # People and their relation to objects
+                """)
 
+    person = st.selectbox("Select a person:", persons)
+
+    st.write("You selected:", person)
+
+    image = st.selectbox("Select an image:", person.images)
+
+    st.image(Image.open(image.filepath), caption=image.getCaption(), use_column_width=True)
+
+    for prediction in image.predictions:
+        st.write(prediction.__str__())
 
 
