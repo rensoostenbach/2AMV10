@@ -17,7 +17,7 @@ class Person:
 
     def setImages(self):
         for image_id in self.__getImageIds():
-            self.images.append(DataImage.ImageByPerson(self, image_id))
+            self.images.append(DataImage.ImageByPerson(image_id, self))
 
     def __getImageIds(self):
         img_ids = [folder.stem.replace(f'Person{self.id}_', '') for folder in self.img_folder.iterdir()

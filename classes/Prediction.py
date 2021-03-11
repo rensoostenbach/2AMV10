@@ -7,4 +7,4 @@ class Prediction:
         self.bounding_box = bounding_box
 
     def __str__(self):
-        return f"Label: {self.label}, score: {self.score}, bounding box: {self.bounding_box.__str__()}"
+        return f"Label: {self.label}, score: {self.score}, relative bounding box: {self.bounding_box.__str__()}"
