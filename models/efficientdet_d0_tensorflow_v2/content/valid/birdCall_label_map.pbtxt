@@ -1,0 +1,215 @@
+item {
+    name: "birdCall",
+    id: 1,
+    display_name: "birdCall"
+}
+item {
+    name: "blueSunglasses",
+    id: 2,
+    display_name: "blueSunglasses"
+}
+item {
+    name: "brownDie",
+    id: 3,
+    display_name: "brownDie"
+}
+item {
+    name: "cactusPaper",
+    id: 4,
+    display_name: "cactusPaper"
+}
+item {
+    name: "canadaPencil",
+    id: 5,
+    display_name: "canadaPencil"
+}
+item {
+    name: "carabiner",
+    id: 6,
+    display_name: "carabiner"
+}
+item {
+    name: "cloudSign",
+    id: 7,
+    display_name: "cloudSign"
+}
+item {
+    name: "cowbell",
+    id: 8,
+    display_name: "cowbell"
+}
+item {
+    name: "cupcakePaper",
+    id: 9,
+    display_name: "cupcakePaper"
+}
+item {
+    name: "eyeball",
+    id: 10,
+    display_name: "eyeball"
+}
+item {
+    name: "foamDart",
+    id: 11,
+    display_name: "foamDart"
+}
+item {
+    name: "gClamp",
+    id: 12,
+    display_name: "gClamp"
+}
+item {
+    name: "giftBag",
+    id: 13,
+    display_name: "giftBag"
+}
+item {
+    name: "glassBead",
+    id: 14,
+    display_name: "glassBead"
+}
+item {
+    name: "gyroscope",
+    id: 15,
+    display_name: "gyroscope"
+}
+item {
+    name: "hairClip",
+    id: 16,
+    display_name: "hairClip"
+}
+item {
+    name: "hairRoller",
+    id: 17,
+    display_name: "hairRoller"
+}
+item {
+    name: "lavenderDie",
+    id: 18,
+    display_name: "lavenderDie"
+}
+item {
+    name: "legoBracelet",
+    id: 19,
+    display_name: "legoBracelet"
+}
+item {
+    name: "metalKey",
+    id: 20,
+    display_name: "metalKey"
+}
+item {
+    name: "miniCards",
+    id: 21,
+    display_name: "miniCards"
+}
+item {
+    name: "noisemaker",
+    id: 22,
+    display_name: "noisemaker"
+}
+item {
+    name: "paperPlate",
+    id: 23,
+    display_name: "paperPlate"
+}
+item {
+    name: "partyFavor",
+    id: 24,
+    display_name: "partyFavor"
+}
+item {
+    name: "pinkCandle",
+    id: 25,
+    display_name: "pinkCandle"
+}
+item {
+    name: "pinkEraser",
+    id: 26,
+    display_name: "pinkEraser"
+}
+item {
+    name: "plaidPencil",
+    id: 27,
+    display_name: "plaidPencil"
+}
+item {
+    name: "pumpkinNotes",
+    id: 28,
+    display_name: "pumpkinNotes"
+}
+item {
+    name: "rainbowPens",
+    id: 29,
+    display_name: "rainbowPens"
+}
+item {
+    name: "redBow",
+    id: 30,
+    display_name: "redBow"
+}
+item {
+    name: "redDart",
+    id: 31,
+    display_name: "redDart"
+}
+item {
+    name: "redWhistle",
+    id: 32,
+    display_name: "redWhistle"
+}
+item {
+    name: "rubiksCube",
+    id: 33,
+    display_name: "rubiksCube"
+}
+item {
+    name: "sign",
+    id: 34,
+    display_name: "sign"
+}
+item {
+    name: "silverStraw",
+    id: 35,
+    display_name: "silverStraw"
+}
+item {
+    name: "spiderRing",
+    id: 36,
+    display_name: "spiderRing"
+}
+item {
+    name: "stickerBox",
+    id: 37,
+    display_name: "stickerBox"
+}
+item {
+    name: "trophy",
+    id: 38,
+    display_name: "trophy"
+}
+item {
+    name: "turtle",
+    id: 39,
+    display_name: "turtle"
+}
+item {
+    name: "vancouverCards",
+    id: 40,
+    display_name: "vancouverCards"
+}
+item {
+    name: "voiceRecorder",
+    id: 41,
+    display_name: "voiceRecorder"
+}
+item {
+    name: "yellowBag",
+    id: 42,
+    display_name: "yellowBag"
+}
+item {
+    name: "yellowBalloon",
+    id: 43,
+    display_name: "yellowBalloon"
+}
