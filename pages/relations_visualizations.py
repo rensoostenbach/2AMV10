@@ -11,9 +11,25 @@ import classes.Object as Object
 
 
 def write():
-    data_folder = Path("../2AMV10/data/raw/")
+    confidence_threshold = st.sidebar.slider(
+        'Confidence threshold: What is the minimum acceptable confidence level for displaying a bounding box?', 0.085,
+        1.0, 0.1, 0.01)
+    st.sidebar.text(f"The current threshold value is {confidence_threshold}")
 
-    persons = Person.getPersonsFrom(data_folder)
+    models = pd.DataFrame({'Models': ['Given model', 'Efficient DET', 'RCNN', 'YOLO v4 E:100 B:16',
+                                      'YOLO v4 E:100 B:32', 'YOLO v4 E:150 B:16', 'YOLO v5 E:100 B:16'],
+                           'Paths': [Path("../2AMV10/data/raw/"),
+                                     Path("../2AMV10/models/efficientdet_d0_tensorflow_v2/inference/output/"),
+                                     Path("../2AMV10/models/faster_rcnn/inference/output/"),
+                                     Path("../2AMV10/models/scaled_yolov4_100epochs_16batchsize/inference/output/"),
+                                     Path("../2AMV10/models/scaled_yolov4_100epochs_32batchsize/inference/output/"),
+                                     Path("../2AMV10/models/scaled_yolov4_150epochs_16batchsize/inference/output/"),
+                                     Path("../2AMV10/models/yolov5l_100epochs_16batchsize/inference/output/")]})
+
+    model = st.sidebar.selectbox('Choose your model: ', models['Models'])
+    model_path = models.loc[models['Models'] == model, 'Paths'].iloc[0]
+
+    persons = Person.getPersonsFrom(model_path)
 
     st.markdown("""
                 # People and their relation to objects
@@ -25,9 +41,9 @@ def write():
 
     image = st.selectbox("Select an image:", person.images)
 
-    st.image(Image.open(image.filepath), caption=image.getCaption(), use_column_width=True)
+    st.image(image.getImageWithBoundingBoxesWithPredictionScoreAbove(confidence_threshold),
+             caption=image.getCaption(), use_column_width=True)
 
     for prediction in image.predictions:
-        st.write(prediction.__str__())
-
-
+        if prediction.score >= confidence_threshold:
+            st.write(prediction.toHTML(), unsafe_allow_html=True)
