@@ -1,9 +1,10 @@
 class BoundingBox():
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, color):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
+        self.color = color
 
     def __str__(self):
         return f'(x,y) = ({self.x}, {self.y}), (width, height) = ({self.width}, {self.height})'

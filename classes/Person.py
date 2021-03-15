@@ -22,6 +22,7 @@ class Person:
     def __getImageIds(self):
         img_ids = [folder.stem.replace(f'Person{self.id}_', '') for folder in self.img_folder.iterdir()
             if folder.match(f'Person{self.id}_*.jpg')]
+        img_ids.sort()
 
         return img_ids
 

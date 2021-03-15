@@ -46,4 +46,4 @@ def write():
 
     for prediction in image.predictions:
         if prediction.score >= confidence_threshold:
-            st.write(prediction.__str__())
+            st.write(prediction.toHTML(), unsafe_allow_html=True)

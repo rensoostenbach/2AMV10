@@ -23,6 +23,8 @@ COLORS = [
     (120, 110, 125),
     (41, 43, 81),
     (183, 172, 140),
+    (0, 255, 0),
+    (255, 0, 0)
 ]
 
 
@@ -60,13 +62,13 @@ class ImageByPerson(DataImage):
     def setPredictions(self):
         predictions = self.getPredictionsFromFile()
 
-        for row in predictions.iterrows():
-            bounding_box = BoundingBox(row[1].x, row[1].y, row[1].Width, row[1].Height)
+        for i, row in enumerate(predictions.iterrows()):
+            bounding_box = BoundingBox(row[1].x, row[1].y, row[1].Width, row[1].Height, COLORS[i % len(COLORS)])
             prediction = Prediction(row[1].Label, row[1].Score, bounding_box)
             self.predictions.append(copy.deepcopy(prediction))
 
     def getPredictionsFromFile(self):
-        predictions = pd.array([])
+        predictions = pd.DataFrame()
 
         try:
             predictions = self.getPredictionsFromCSV()
@@ -82,12 +84,25 @@ class ImageByPerson(DataImage):
         predictions = pd.read_csv(self.filepath.__str__() + '.csv')
 
         self.makeCoordinatesRelative(predictions)
+        predictions = self.__formatPredictionsDataframe(predictions)
 
-        return predictions
+        return predictions[predictions['Score'] >= 0.085]
 
     def getPredictionsFromTxt(self):
-        predictions = pd.read_table(self.filepath.__str__() + '.jpg.txt', delim_whitespace=True, names=('Label', 'x', 'y', 'Width', 'Height', 'Score'))
-        pd.to_numeric(predictions['Score'])
+        label_path = self.filepath.parents[0]
+
+        if label_path.joinpath('labels').exists():
+            label_path = label_path.joinpath('labels')
+
+        predictions = pd.DataFrame()
+
+        for file in label_path.iterdir():
+            if file.match(f'Person{self.person.id}_{self.id}*.txt'):
+                predictions = pd.read_table(file, delim_whitespace=True,
+                                            names=('Label', 'x', 'y', 'Width', 'Height', 'Score'))
+                pd.to_numeric(predictions['Score'])
+
+        predictions = self.__formatBoundingBoxCoordinates(predictions)
 
         return predictions[predictions['Score'] >= 0.085]
 
@@ -104,6 +119,25 @@ class ImageByPerson(DataImage):
             predictions['Width'] = pd.to_numeric(predictions['Width']) / image_size[0]
             predictions['Height'] = pd.to_numeric(predictions['Height']) / image_size[0]
 
+    def __formatPredictionsDataframe(self, predictions):
+        while predictions.shape[1] < 6:
+            predictions[predictions.shape[1]] = 0
+
+        predictions.columns=['x', 'y', 'Width', 'Height', 'Score', 'Label']
+
+        return predictions
+
+    def __formatBoundingBoxCoordinates(self, predictions):
+        if self.__isYoloModel():
+            predictions['x'] -= predictions['Width']/2
+            predictions['y'] -= predictions['Height']/2
+        else:
+            predictions.rename(columns={'x': 'y', 'y': 'x', 'Width': 'Height', 'Height': 'Width'}, inplace=True)
+            predictions['Width'] = predictions['Width'] - predictions['x']
+            predictions['Height'] = predictions['Height'] - predictions['y']
+
+        return predictions
+
     def getImageWithBoundingBoxesWithPredictionScoreAbove(self, confidence_threshold):
         valid_predictions = [prediction for prediction in self.predictions if prediction.score >= confidence_threshold]
 
@@ -114,22 +148,23 @@ class ImageByPerson(DataImage):
         image_as_array = np.asarray(image)
         image_in_cv2_format = cv2.cvtColor(image_as_array, cv2.COLOR_RGB2BGR)
 
-        self.__drawAllBoundingBoxesAndPredictionsOn(image_in_cv2_format, valid_predictions)
+        if not self.__isYoloModel():
+            self.__drawAllBoundingBoxesAndPredictionsOn(image_in_cv2_format, valid_predictions)
 
         image_as_array = cv2.cvtColor(image_in_cv2_format, cv2.COLOR_BGR2RGB, None, None)
         return Image.fromarray(image_as_array)
 
     def __drawAllBoundingBoxesAndPredictionsOn(self, image, valid_predictions):
         for index, prediction in enumerate(valid_predictions):
-            color = COLORS[index % len(COLORS)]
-            self.__drawBoundingBoxAndPredictionOn(image, color, prediction)
+            self.__drawBoundingBoxAndPredictionOn(image, prediction)
 
-    def __drawBoundingBoxAndPredictionOn(self, image, color, prediction):
+    def __drawBoundingBoxAndPredictionOn(self, image, prediction):
         pt1, pt2 = prediction.bounding_box.getIntegerCoordinates(image)
 
-        self.__drawBoundingBoxOn(image, color, pt1, pt2)
+        self.__drawBoundingBoxOn(image, prediction.bounding_box.color, pt1, pt2)
 
-        self.__drawPredictionOn(image, color, prediction, prediction.bounding_box.getBottomLeftIntegerCoordinate(image))
+        self.__drawPredictionOn(image, prediction.bounding_box.color, prediction,
+                                prediction.bounding_box.getBottomLeftIntegerCoordinate(image))
 
     def __drawBoundingBoxOn(self, image, color, top_left, top_right):
         thickness = ceil(image.shape[1] / 250)
@@ -147,12 +182,28 @@ class ImageByPerson(DataImage):
             thickness=ceil(image.shape[1] / 500),
         )
 
+    def __isYoloModel(self):
+        if isinstance(self.filepath, str):
+            self.filepath = Path(self.filepath)
+
+        parents = self.filepath.parents
+
+        for parent in parents:
+            if parent.match('*yolo*'):
+                return True
+
+        return False
+
 
 class ObjectImage(DataImage):
-    def __init__(self, id, name):
+    def __init__(self, id, object):
         super().__init__(id)
 
-        self.name = name
+        self.object = object
+        self.filepath = Path("../2AMV10/data/raw/trainingImages/" + object.name + "/" + object.name + "_" + str(id) + '.jpg')
+
+    def __str__(self):
+        return f"Image {self.id}"
 
     def getCaption(self):
-        return f"Image {self.id} of a {self.name}"
+        return f"Image {self.id} of a {self.object.name}"
