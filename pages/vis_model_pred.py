@@ -1,53 +1,42 @@
-import pandas as pd
 import streamlit as st
 from pathlib import Path
-from functions import draw_bbox, visualize_hog
-import glob
+import classes.DataImage as DataImage
+import classes.Person as Person
+import classes.Object as Object
+import os
+import pytorch_cnn_visualizations.src.gradcam as gradcam
+from PIL import Image
 
 
 def write():
-    data_folder = Path("../2AMV10/data/raw/")
+    train_test = st.sidebar.radio("Train images or person images", ['Train', 'Person'])
+    # TODO: Make a button that loads the gradcam, so people know they have to wait perhaps
+    if train_test == 'Train':
+        trainimages_folder = Path("../2AMV10/data/raw/TrainingImages/")
+        objects = sorted([f.name for f in os.scandir(trainimages_folder) if f.is_dir()])
+        obj = st.selectbox("Select an object:", objects)
+        object_class = objects.index(obj)
+        object_number = st.selectbox("Choose object picture (1-12)", list(range(1, 13)))
 
-    # Let user decide person number
-    person_number = st.sidebar.selectbox("Choose person number (1-40)", list(range(1, 41)))
+        img_path = trainimages_folder / f"{obj}/{obj}_{object_number}.jpg"
+        image = Image.open(img_path).convert('RGB')
+        gradcam.run(image, obj, object_class)
 
-    # Choose amount of images that user has
-    jpg_counter = len(glob.glob1(data_folder / f"Person{person_number}", "*.jpg"))
-    file_number = st.sidebar.selectbox("Choose image number", list(range(1, jpg_counter + 1)))
+        gradcam_img = Image.open(f"results/gradcam/{obj}_{object_class}_Cam_On_Image.png")
+        st.image(gradcam_img, caption=f"Gradcam image of {obj}", use_column_width='auto')
 
-    # Add in confidence slider.
-    confidence_threshold = st.sidebar.slider(
-        'Confidence threshold: What is the minimum acceptable confidence level for displaying a bounding box?', 0.0,
-        1.0, 0.5, 0.01)
-    st.sidebar.text(f"The current threshold value is {confidence_threshold}")
+    # TODO: Write it nicely for persons images
+    else:
+        # Hardcoded for YOLOv5l, as we will only be looking at this model
+        model_path = Path("../2AMV10/trained_models/yolov5l_100epochs_16batchsize/inference/output/")
+        persons = Person.getPersonsFrom(model_path)
 
-    st.write(
-        f"We are looking at a picture of person number {person_number} with image number {file_number}."
-    )
+        person = st.selectbox("Select a person:", persons)
+        st.write("You selected:", person)
+        image = st.selectbox("Select an image:", person.images)
 
-    img = data_folder / f"Person{person_number}/Person{person_number}_{file_number}.jpg"
-
-    predictions = (
-            data_folder / f"Person{person_number}/Person{person_number}_{file_number}.csv"
-    )
-    df = pd.read_csv(predictions)
-    df = df[df['Score'] >= confidence_threshold]
-
-    image, bbox_image = draw_bbox(img, df)
-
-    hog_image_rescaled = visualize_hog(img, pixels_per_cell=(64, 64))
-
-    col1, col2, col3 = st.beta_columns(3)
-    with col1:
-        st.image(image, caption="Random picture", use_column_width='auto')
-    with col2:
-        st.image(
-            bbox_image, caption="Random picture with bounding boxes", use_column_width='auto'
-        )
-    with col3:
-        st.image(
-            hog_image_rescaled, caption="Histogram of Oriented Gradients (HOG)", use_column_width='auto'
-        )
-
-    st.write(df)
+        img_path = image.filepath
+        image = Image.open(img_path).convert('RGB')
+        gradcam_img = gradcam.run(image, person.id, None)
+        st.image(gradcam_img, caption=f"Gradcam image of Person {person.id}", use_column_width='auto')
 
