@@ -6,6 +6,16 @@ import glob
 
 
 def write():
+
+
+
+
+
+
+
+
+
+
     data_folder = Path("../2AMV10/data/raw/")
 
     # Let user decide person number
