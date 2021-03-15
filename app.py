@@ -1,8 +1,7 @@
 import streamlit as st
 import awesome_streamlit as ast
-
-
 import pages.vis_model_pred
+import pages.relations_visualizations
 
 st.set_page_config(layout="wide")
 
