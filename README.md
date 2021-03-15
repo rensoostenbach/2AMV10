@@ -8,10 +8,10 @@ Create a virtual environment with Python 3.8. Below is how to do it with Anacond
 conda create -n 2amv10 python=3.8
 ```
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install the required dependencies.
+Use the package manager [conda](https://docs.conda.io/en/latest/) to create the environment.
 
 ```bash
-pip install -r requirements.txt
+conda env create -f environment.yml
 ```
 
 ## Usage
