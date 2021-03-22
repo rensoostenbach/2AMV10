@@ -145,7 +145,7 @@ class ImageByPerson(DataImage):
         image_as_array = np.asarray(image)
         image_in_cv2_format = cv2.cvtColor(image_as_array, cv2.COLOR_RGB2BGR)
 
-        if not self.__isYoloModel():
+        if not self.__isYoloModel(): # Yolo models have bounding boxes already drawn (only if the model predicts any)
             self.__drawAllBoundingBoxesAndPredictionsOn(image_in_cv2_format, valid_predictions)
 
         image_as_array = cv2.cvtColor(image_in_cv2_format, cv2.COLOR_BGR2RGB)
