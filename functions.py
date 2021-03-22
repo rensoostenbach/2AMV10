@@ -3,7 +3,6 @@ from PIL import Image
 import cv2
 from math import ceil
 
-
 COLORS = [
     (123, 140, 191),
     (0, 0, 0),
