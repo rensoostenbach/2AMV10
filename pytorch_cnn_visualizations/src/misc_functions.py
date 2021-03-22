@@ -228,8 +228,10 @@ def get_params(original_image, obj, object_class, picture_number, **person):
 
     Args:
         original_image (numpy arr): Original image read from the file
-        obj (string): The object that we have in the image, or the person
+        obj (string): The object that we have in the image
+        object_class (int): The class of the object
         picture_number (int): The number of the picture
+        person (string, optional): The string of the person, e.g. 'Person1'
 
     returns:
         original_image (numpy arr): Original image read from the file
