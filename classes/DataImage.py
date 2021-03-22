@@ -200,7 +200,7 @@ class ObjectImage(DataImage):
         super().__init__(id)
 
         self.object = object
-        self.filepath = Path("../2AMV10/data/raw/trainingImages/" + object.name + "/" + object.name + "_" + str(id) + '.jpg')
+        self.filepath = Path("../2AMV10/data/raw/TrainingImages/" + object.name + "/" + object.name + "_" + str(id) + '.jpg')
 
     def __str__(self):
         return f"Image {self.id}"
