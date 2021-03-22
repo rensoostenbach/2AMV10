@@ -68,7 +68,7 @@ def save_class_activation_images(org_img, activation_map, file_name):
     # Resize org img
     org_img = org_img.resize((416, 416), Image.ANTIALIAS)
     # Grayscale activation map
-    heatmap, heatmap_on_image = apply_colormap_on_image(org_img, activation_map, 'jet_r')
+    heatmap, heatmap_on_image = apply_colormap_on_image(org_img, activation_map, 'YlOrRd_r')
     # Save colored heatmap
     path_to_file = os.path.join('results/gradcam', file_name+'_Cam_Heatmap.png')
     save_image(heatmap, path_to_file)
@@ -222,13 +222,13 @@ def get_positive_negative_saliency(gradient):
     return pos_saliency, neg_saliency
 
 
-def get_params(original_image, obj, picture_number):
+def get_params(original_image, obj, object_class, picture_number, **person):
     """
         Gets used variables for almost all visualizations, like the image, model etc.
 
     Args:
         original_image (numpy arr): Original image read from the file
-        obj (string): The object that we have in the image, or the person who the image belongs to
+        obj (string): The object that we have in the image, or the person
         picture_number (int): The number of the picture
 
     returns:
@@ -238,8 +238,9 @@ def get_params(original_image, obj, picture_number):
         pretrained_model(Pytorch model): Model to use for the operations
     """
 
-    if picture_number is None:
-        file_name_to_export = f"{obj}"
+    if object_class is None:  # We have a person picture
+        person = person['person']['person']
+        file_name_to_export = f"{person}_{picture_number}"
     else:
         file_name_to_export = f"{obj}_{picture_number}"
     # Process image
