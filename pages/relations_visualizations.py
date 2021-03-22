@@ -19,12 +19,12 @@ def write():
     models = pd.DataFrame({'Models': ['Given model', 'Efficient DET', 'RCNN', 'YOLO v4 E:100 B:16',
                                       'YOLO v4 E:100 B:32', 'YOLO v4 E:150 B:16', 'YOLO v5 E:100 B:16'],
                            'Paths': [Path("../2AMV10/data/raw/"),
-                                     Path("../2AMV10/models/efficientdet_d0_tensorflow_v2/inference/output/"),
-                                     Path("../2AMV10/models/faster_rcnn/inference/output/"),
-                                     Path("../2AMV10/models/scaled_yolov4_100epochs_16batchsize/inference/output/"),
-                                     Path("../2AMV10/models/scaled_yolov4_100epochs_32batchsize/inference/output/"),
-                                     Path("../2AMV10/models/scaled_yolov4_150epochs_16batchsize/inference/output/"),
-                                     Path("../2AMV10/models/yolov5l_100epochs_16batchsize/inference/output/")]})
+                                     Path("../2AMV10/trained_models/efficientdet_d0_tensorflow_v2/inference/output/"),
+                                     Path("../2AMV10/trained_models/faster_rcnn/inference/output/"),
+                                     Path("../2AMV10/trained_models/scaled_yolov4_100epochs_16batchsize/inference/output/"),
+                                     Path("../2AMV10/trained_models/scaled_yolov4_100epochs_32batchsize/inference/output/"),
+                                     Path("../2AMV10/trained_models/scaled_yolov4_150epochs_16batchsize/inference/output/"),
+                                     Path("../2AMV10/trained_models/yolov5l_100epochs_16batchsize/inference/output/")]})
 
     model = st.sidebar.selectbox('Choose your model: ', models['Models'])
     model_path = models.loc[models['Models'] == model, 'Paths'].iloc[0]
