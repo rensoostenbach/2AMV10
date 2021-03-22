@@ -8,9 +8,6 @@ import numpy as np
 import copy
 import cv2
 from math import ceil
-from skimage.feature import hog
-from skimage import exposure
-from skimage.color import rgb2gray
 
 COLORS = [
     (123, 140, 191),
@@ -146,12 +143,14 @@ class ImageByPerson(DataImage):
 
     def __drawBoundingBoxesForPredictionsOn(self, image, valid_predictions):
         image_as_array = np.asarray(image)
+        print(image_as_array)
         image_in_cv2_format = cv2.cvtColor(image_as_array, cv2.COLOR_RGB2BGR)
+        print(image_in_cv2_format)
 
         if not self.__isYoloModel():
             self.__drawAllBoundingBoxesAndPredictionsOn(image_in_cv2_format, valid_predictions)
 
-        image_as_array = cv2.cvtColor(image_in_cv2_format, cv2.COLOR_BGR2RGB, None, None)
+        image_as_array = cv2.cvtColor(image_in_cv2_format, cv2.COLOR_BGR2RGB)
         return Image.fromarray(image_as_array)
 
     def __drawAllBoundingBoxesAndPredictionsOn(self, image, valid_predictions):
