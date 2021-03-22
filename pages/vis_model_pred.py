@@ -12,6 +12,8 @@ import glob
 def write():
     train_test = st.sidebar.radio("Train images or person images", ['Train', 'Person'])
     # TODO: Maybe make a button that loads the gradcam, so people know they have to wait a little bit
+    # TODO: Get rid of the person images here, since they are also implemented somewhere else.
+    # TODO: Show all images of a certain object on a single page.
     if train_test == 'Train':
         # Get train images and object class
         trainimages_folder = Path("../2AMV10/data/raw/TrainingImages/")
