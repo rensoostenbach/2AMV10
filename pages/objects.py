@@ -35,7 +35,7 @@ def write():
         # Get train images and object class
         trainimages_folder = Path("../2AMV10/data/raw/TrainingImages/")
         object_class = objects.index(obj)
-        
+
         # Run gradcam on all object images
         for i in range(1, 13):
             img_path = trainimages_folder / f"{obj}/{obj}_{i}.jpg"
