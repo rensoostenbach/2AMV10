@@ -11,6 +11,9 @@ import classes.Object as Object
 
 
 def write():
+    ########
+    # PAGE #
+    ########
     objects = Object.getObjects()
 
     st.markdown("""

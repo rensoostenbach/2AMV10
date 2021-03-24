@@ -1,6 +1,6 @@
 import classes.BoundingBox as BoundingBox
 
-LABELS = {0.0: 'Birdcall',
+LABELS = {0.0: 'birdCall',
           1.0: 'blueSunglasses',
           2.0: 'brownDie',
           3.0: 'cactusPaper',
