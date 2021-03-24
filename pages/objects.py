@@ -35,7 +35,7 @@ def write():
         # Get train images and object class
         trainimages_folder = Path("../2AMV10/data/raw/TrainingImages/")
         object_class = objects.index(obj)
-
+        
         # Run gradcam on all object images
         for i in range(1, 13):
             img_path = trainimages_folder / f"{obj}/{obj}_{i}.jpg"
@@ -64,15 +64,15 @@ def write():
 
         for idx, type in enumerate(image_types):
             cols = st.beta_columns(12)
-            for i in range(1, 13):
+            for i in range(0, 12):
                 if type == 'train':
-                    img_path = trainimages_folder / f"{obj}/{obj}_{i}.jpg"
+                    img_path = trainimages_folder / f"{obj}/{obj}_{i + 1}.jpg"
                     image = Image.open(img_path).convert('RGB').resize((104, 104))
-                    cols[i-1].image(image,
-                                    # caption=f"Image {i} of {obj}"
-                                    )
+                    cols[i].image(image,
+                                  # caption=f"Image {i} of {obj}"
+                                  )
                 else:  # Grad-CAM images
                     image = Image.open(f"results/gradcam/{obj}_{i}_Cam_{type}.png")
-                    cols[i-1].image(image,
-                                    # caption=f"Gradcam {type} image of {obj}",
-                                    width=104)
+                    cols[i].image(image,
+                                  # caption=f"Gradcam {type} image of {obj}",
+                                  width=104)
