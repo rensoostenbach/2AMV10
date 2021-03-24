@@ -3,5 +3,6 @@
 .vscode/
 .idea/
 *.pt
+!yolov5l_weights.pt
 *.pyc
 *.pyc
