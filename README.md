@@ -2,12 +2,7 @@
 
 ## Installation
 
-Create a virtual environment with Python 3.8. Below is how to do it with Anaconda.
-
-```bash
-conda create -n 2amv10 python=3.8
-```
-
+Create a virtual environment with Python 3.8. This is done via the environment.yml file.
 Use the package manager [conda](https://docs.conda.io/en/latest/) to create the environment.
 
 ```bash
