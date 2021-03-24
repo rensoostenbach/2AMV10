@@ -60,22 +60,19 @@ def write():
         # Get train images
         trainimages_folder = Path("../2AMV10/data/raw/TrainingImages/")
 
-        # Load all files
-        # Run gradcam on all object images
-        for i in range(1, 13):
-            img_path = trainimages_folder / f"{obj}/{obj}_{i}.jpg"
-            image = Image.open(img_path).convert('RGB')
+        image_types = ['train', 'On_Image', 'Grayscale', 'Heatmap']
 
-            gradcam_img1 = Image.open(f"results/gradcam/{obj}_{i}_Cam_On_Image.png")
-            gradcam_img2 = Image.open(f"results/gradcam/{obj}_{i}_Cam_Grayscale.png")
-            gradcam_img3 = Image.open(f"results/gradcam/{obj}_{i}_Cam_Heatmap.png")
-
-            col1, col2, col3, col4 = st.beta_columns(4)
-            with col1:
-                st.image(image.resize((416, 416)), caption=f"Image {i} of {obj}", use_column_width='auto')
-            with col2:
-                st.image(gradcam_img1, caption=f"Gradcam image of {obj}", use_column_width='auto')
-            with col3:
-                st.image(gradcam_img2, caption=f"Gradcam grayscale image of {obj}", use_column_width='auto')
-            with col4:
-                st.image(gradcam_img3, caption=f"Gradcam heatmap image of {obj}", use_column_width='auto')
+        for idx, type in enumerate(image_types):
+            cols = st.beta_columns(12)
+            for i in range(1, 13):
+                if type == 'train':
+                    img_path = trainimages_folder / f"{obj}/{obj}_{i}.jpg"
+                    image = Image.open(img_path).convert('RGB').resize((104, 104))
+                    cols[i-1].image(image,
+                                    # caption=f"Image {i} of {obj}"
+                                    )
+                else:  # Grad-CAM images
+                    image = Image.open(f"results/gradcam/{obj}_{i}_Cam_{type}.png")
+                    cols[i-1].image(image,
+                                    # caption=f"Gradcam {type} image of {obj}",
+                                    width=104)
