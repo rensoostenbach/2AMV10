@@ -2,6 +2,8 @@ import pandas as pd
 import streamlit as st
 from pathlib import Path
 import classes.Person as Person
+from PIL import Image
+import pytorch_cnn_visualizations.src.gradcam as gradcam
 
 
 def write():
@@ -46,3 +48,31 @@ def write():
     for prediction in image.predictions:
         if prediction.score >= confidence_threshold:
             st.write(prediction.toHTML(), unsafe_allow_html=True)
+
+    if model == 'YOLO v5 E:100 B:16':
+        person_str = f"Person{person.id}"
+        data_folder = Path("../2AMV10/data/raw/")
+        image_path = data_folder / f"Person{person.id}/Person{person.id}_{image.id}.jpg"
+        original_image = Image.open(image_path).convert('RGB')
+        gradcam.run(original_image=original_image, obj=person.id, object_class=None, number=image.id,
+                    person=person_str)
+
+        gradcam_img1 = Image.open(f"results/gradcam/{person_str}_{image.id}_Cam_On_Image.png")
+        gradcam_img2 = Image.open(f"results/gradcam/{person_str}_{image.id}_Cam_Grayscale.png")
+        gradcam_img3 = Image.open(f"results/gradcam/{person_str}_{image.id}_Cam_Heatmap.png")
+
+        col1, col2 = st.beta_columns(2)
+        with col1:
+            st.image(image.getImageWithBoundingBoxesWithPredictionScoreAbove(confidence_threshold),
+                     caption=image.getCaption(), width=416)
+        with col2:
+            st.image(gradcam_img1, caption=f"Gradcam image of {person}, picture {image.id}", use_column_width='auto')
+
+        col1, col2 = st.beta_columns(2)
+        with col1:
+            st.image(gradcam_img2, caption=f"Gradcam grayscale image of {person}", use_column_width='auto')
+        with col2:
+            st.image(gradcam_img3, caption=f"Gradcam heatmap image of {person}", use_column_width='auto')
+    else:
+        st.image(image.getImageWithBoundingBoxesWithPredictionScoreAbove(confidence_threshold),
+                 caption=image.getCaption(), use_column_width=True)
