@@ -27,7 +27,7 @@ class Object:
 
 
 def getObjects():
-    data_folder = Path("../2AMV10/data/raw/trainingImages/")
+    data_folder = Path("../2AMV10/data/raw/TrainingImages/")
     object_names = [folder.stem for folder in data_folder.iterdir() if not folder.match('*.DS*')]
     object_names.sort()
 

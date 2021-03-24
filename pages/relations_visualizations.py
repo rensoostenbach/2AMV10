@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
 import networkx as nx
+import pytorch_cnn_visualizations.src.gradcam as gradcam
+
 
 
 def write():
@@ -51,7 +53,6 @@ def write():
     relation_graph = BipartiteGraph.BipartiteGraph(persons, objects, confidence_threshold)
 
     st.pyplot(relation_graph.getFigure())
-
     # person = st.selectbox("Select a person:", persons)
     #
     # st.write("You selected:", person)

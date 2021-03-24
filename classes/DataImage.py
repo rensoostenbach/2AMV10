@@ -8,9 +8,6 @@ import numpy as np
 import copy
 import cv2
 from math import ceil
-from skimage.feature import hog
-from skimage import exposure
-from skimage.color import rgb2gray
 
 COLORS = [
     (123, 140, 191),
@@ -148,10 +145,10 @@ class ImageByPerson(DataImage):
         image_as_array = np.asarray(image)
         image_in_cv2_format = cv2.cvtColor(image_as_array, cv2.COLOR_RGB2BGR)
 
-        if not self.__isYoloModel():
+        if not self.__isYoloModel(): # Yolo models have bounding boxes already drawn (only if the model predicts any)
             self.__drawAllBoundingBoxesAndPredictionsOn(image_in_cv2_format, valid_predictions)
 
-        image_as_array = cv2.cvtColor(image_in_cv2_format, cv2.COLOR_BGR2RGB, None, None)
+        image_as_array = cv2.cvtColor(image_in_cv2_format, cv2.COLOR_BGR2RGB)
         return Image.fromarray(image_as_array)
 
     def __drawAllBoundingBoxesAndPredictionsOn(self, image, valid_predictions):
@@ -200,7 +197,7 @@ class ObjectImage(DataImage):
         super().__init__(id)
 
         self.object = object
-        self.filepath = Path("../2AMV10/data/raw/trainingImages/" + object.name + "/" + object.name + "_" + str(id) + '.jpg')
+        self.filepath = Path("../2AMV10/data/raw/TrainingImages/" + object.name + "/" + object.name + "_" + str(id) + '.jpg')
 
     def __str__(self):
         return f"Image {self.id}"

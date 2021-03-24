@@ -123,12 +123,12 @@ class GradCam():
         return cam
 
 
-def run(original_image, obj, object_class):
+def run(original_image, obj, object_class, number, **person):
     # Get params
     (original_image, prep_img, file_name_to_export, pretrained_model) = \
-        get_params(original_image, obj, object_class)
-    # Grad cam
-    grad_cam = GradCam(pretrained_model, target_layer=24)
+        get_params(original_image=original_image, obj=obj, object_class=object_class, picture_number=number, person=person)
+    # Grad cam, layer 22 because it is the last one before the final convolutional layer.
+    grad_cam = GradCam(pretrained_model, target_layer=22)
     # Generate cam mask
     cam = grad_cam.generate_cam(prep_img, target_class=object_class)
     # Save mask
