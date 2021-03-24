@@ -1,21 +1,7 @@
-import copy
 import pandas as pd
-import numpy as np
 import streamlit as st
-import random
-from PIL import Image
 from pathlib import Path
-import classes.DataImage as DataImage
 import classes.Person as Person
-import classes.Object as Object
-import classes.BipartiteGraph as BipartiteGraph
-
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import numpy as np
-import networkx as nx
-import pytorch_cnn_visualizations.src.gradcam as gradcam
-
 
 
 def write():
@@ -44,24 +30,19 @@ def write():
     # PAGE #
     ########
     st.markdown("""
-                # People and their relation to objects
+                # People and their photos
                 """)
 
     persons = Person.getPersonsFrom(model_path)
-    objects = Object.getObjects()
+    person = st.selectbox("Select a person:", persons)
 
-    relation_graph = BipartiteGraph.BipartiteGraph(persons, objects, confidence_threshold)
+    st.write("You selected:", person)
 
-    st.pyplot(relation_graph.getFigure())
-    # person = st.selectbox("Select a person:", persons)
-    #
-    # st.write("You selected:", person)
-    #
-    # image = st.selectbox("Select an image:", person.images)
-    #
-    # st.image(image.getImageWithBoundingBoxesWithPredictionScoreAbove(confidence_threshold),
-    #          caption=image.getCaption(), use_column_width=True)
-    #
-    # for prediction in image.predictions:
-    #     if prediction.score >= confidence_threshold:
-    #         st.write(prediction.toHTML(), unsafe_allow_html=True)
+    image = st.selectbox("Select an image:", person.images)
+
+    st.image(image.getImageWithBoundingBoxesWithPredictionScoreAbove(confidence_threshold),
+             caption=image.getCaption(), use_column_width=True)
+
+    for prediction in image.predictions:
+        if prediction.score >= confidence_threshold:
+            st.write(prediction.toHTML(), unsafe_allow_html=True)

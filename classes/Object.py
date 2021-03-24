@@ -9,12 +9,12 @@ class Object:
         self.filepath = filepath
         self.images = []
 
-        self.setImages()
+        self.__setImages()
 
     def __str__(self):
         return self.name
 
-    def setImages(self):
+    def __setImages(self):
         for image_id in self.__getImageIds():
             self.images.append(DataImage.ObjectImage(image_id, self))
 

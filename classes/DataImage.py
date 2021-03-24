@@ -57,35 +57,35 @@ class ImageByPerson(DataImage):
         return f"Image {self.id} by person {self.person.id}"
 
     def setPredictions(self):
-        predictions = self.getPredictionsFromFile()
+        predictions = self.__getPredictionsFromFile()
 
         for i, row in enumerate(predictions.iterrows()):
             bounding_box = BoundingBox(row[1].x, row[1].y, row[1].Width, row[1].Height, COLORS[i % len(COLORS)])
             prediction = Prediction(row[1].Label, row[1].Score, bounding_box)
             self.predictions.append(copy.deepcopy(prediction))
 
-    def getPredictionsFromFile(self):
+    def __getPredictionsFromFile(self):
         predictions = pd.DataFrame()
 
         try:
-            predictions = self.getPredictionsFromCSV()
+            predictions = self.__getPredictionsFromCSV()
         except FileNotFoundError:
             try:
-                predictions = self.getPredictionsFromTxt()
+                predictions = self.__getPredictionsFromTxt()
             except:
                 pass
 
         return predictions
 
-    def getPredictionsFromCSV(self):
+    def __getPredictionsFromCSV(self):
         predictions = pd.read_csv(self.filepath.__str__() + '.csv')
 
-        self.makeCoordinatesRelative(predictions)
+        self.__makeCoordinatesRelative(predictions)
         predictions = self.__formatPredictionsDataframe(predictions)
 
         return predictions[predictions['Score'] >= 0.085]
 
-    def getPredictionsFromTxt(self):
+    def __getPredictionsFromTxt(self):
         label_path = self.filepath.parents[0]
 
         if label_path.joinpath('labels').exists():
@@ -103,7 +103,7 @@ class ImageByPerson(DataImage):
 
         return predictions[predictions['Score'] >= 0.085]
 
-    def makeCoordinatesRelative(self, predictions):
+    def __makeCoordinatesRelative(self, predictions):
         image_size = Image.open(self.filepath.__str__() + '.jpg').size
         try:
             predictions['x'] = pd.to_numeric(predictions['x']) / image_size[0]
