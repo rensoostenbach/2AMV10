@@ -66,13 +66,13 @@ def write():
             cols = st.beta_columns(12)
             for i in range(0, 12):
                 if type == 'train':
-                    img_path = trainimages_folder / f"{obj}/{obj}_{i + 1}.jpg"
+                    img_path = trainimages_folder / f"{obj}/{obj}_{i+1}.jpg"
                     image = Image.open(img_path).convert('RGB').resize((104, 104))
                     cols[i].image(image,
                                   # caption=f"Image {i} of {obj}"
                                   )
                 else:  # Grad-CAM images
-                    image = Image.open(f"results/gradcam/{obj}_{i}_Cam_{type}.png")
+                    image = Image.open(f"results/gradcam/{obj}_{i+1}_Cam_{type}.png")
                     cols[i].image(image,
                                   # caption=f"Gradcam {type} image of {obj}",
                                   width=104)
