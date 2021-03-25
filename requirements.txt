@@ -17,4 +17,3 @@ pycocotools==2.0.2
 PyYAML==5.4.1
 thop==0.0.31-2005241907
 wandb==0.10.23
-attrs==20.3.0
