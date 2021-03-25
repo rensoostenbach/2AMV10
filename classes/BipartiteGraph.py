@@ -12,13 +12,15 @@ from matplotlib import cm
 import matplotlib.image as mpimg
 import numpy as np
 import networkx as nx
+import pandas as pd
+from sklearn.cluster import KMeans
 
 
 class BipartiteGraph:
     GRAPH_WIDTH = 8
     GRAPH_HEIGHT = 25
 
-    def __init__(self, persons, objects, confidence_threshold):
+    def __init__(self, persons, objects, confidence_threshold, k):
         self.person_nodes = []
         self.person_node_labels = {}
         self.object_nodes = []
@@ -30,7 +32,7 @@ class BipartiteGraph:
 
         self.__addPersonNodes(persons)
         self.__addObjectNodes(objects)
-        self.__addRelations(persons, confidence_threshold)
+        self.__addRelations(persons, objects, confidence_threshold, k)
         self.__drawGraph()
 
     def getFigure(self):
@@ -45,21 +47,26 @@ class BipartiteGraph:
     def __addObjectNodes(self, objects):
         for object in objects:
             filepath = object.images[0].filepath
-            self.graph.add_node(object.name, filepath=filepath, size=1, label=object.name)
+            self.graph.add_node(object.name, filepath=str(filepath), size=1, label=object.name)
             self.object_nodes.append(object.name)
 
-    def __addRelations(self, persons, confidence_threshold):
+    def __addRelations(self, persons, objects, confidence_threshold, k):
+        persons_with_total_item_scores = pd.DataFrame(0, index=np.arange(40), columns=[obj.name for obj in objects])
         for person in persons:
             for img in person.images:
                 for prediction in img.predictions:
+                    persons_with_total_item_scores.loc[int(person.id) - 1, prediction.label] += prediction.score
                     if prediction.score >= confidence_threshold:
                         self.graph.add_edge(person.id, prediction.label, weight=prediction.score)
+        kmeans = KMeans(n_clusters=k)
+        kmeans.fit(persons_with_total_item_scores)
+        self.person_node_colors = kmeans.predict(persons_with_total_item_scores)
 
     def __drawGraph(self):
         self.__addColorBar()
         self.__formatFigure()
 
-        pos = self.__getNodeLayout()
+        pos = self.getNodeLayout()
 
         self.__drawNodes(pos)
         self.__drawEdges(pos)
@@ -80,7 +87,7 @@ class BipartiteGraph:
 
     # There is a bipartite layout function in networkx, however, layout is not optimal for image size.
     # Therefore, this is a direct implementation
-    def __getNodeLayout(self):
+    def getNodeLayout(self):
         x_left = 0.2
         x_right = self.GRAPH_WIDTH - 0.2
 
@@ -105,7 +112,7 @@ class BipartiteGraph:
 
     def __drawNodes(self, pos):
         nx.draw_networkx_nodes(self.graph, pos, self.object_nodes, 5)
-        nx.draw_networkx_nodes(self.graph, pos, self.person_nodes, 470)
+        nx.draw_networkx_nodes(self.graph, pos, self.person_nodes, 470, node_color=self.person_node_colors)
         nx.draw_networkx_labels(self.graph, pos, self.person_node_labels, font_size=4)
 
     def __placeObjectImagesOverCorrespondingNodes(self, pos):

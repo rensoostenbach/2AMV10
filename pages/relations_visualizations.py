@@ -1,9 +1,15 @@
 import pandas as pd
 import streamlit as st
 from pathlib import Path
+
+from bokeh.models import StaticLayoutProvider
+
 import classes.Person as Person
 import classes.Object as Object
 import classes.BipartiteGraph as BipartiteGraph
+import networkx as nx
+from bokeh.io import output_file, show
+from bokeh.plotting import figure, from_networkx
 
 
 def write():
@@ -11,8 +17,11 @@ def write():
     # SIDEBAR #
     ###########
     confidence_threshold = st.sidebar.slider(
-        'Confidence threshold: What is the minimum acceptable confidence level for displaying a bounding box?', 0.085,
+        'Confidence threshold: What is the minimum acceptable confidence level for displaying a prediction?', 0.085,
         1.0, 0.1, 0.01)
+    k = st.sidebar.slider(
+        'How many clusters (node colors) do you want to predict?', 1, 40, 5, 1
+    )
     st.sidebar.text(f"The current threshold value is {confidence_threshold}")
 
     models = pd.DataFrame({'Models': ['Given model', 'Efficient DET', 'RCNN', 'YOLO v4 E:100 B:16',
@@ -38,9 +47,13 @@ def write():
     persons = Person.getPersonsFrom(model_path)
     objects = Object.getObjects()
 
-    relation_graph = BipartiteGraph.BipartiteGraph(persons, objects, confidence_threshold)
-
-    st.pyplot(relation_graph.getFigure())
+    relation_graph = BipartiteGraph.BipartiteGraph(persons, objects, confidence_threshold, k)
+    plot = figure(x_range=(0, 8), y_range=(0, 25))
+    graph = from_networkx(relation_graph.graph, nx.spring_layout)
+    fixed_layout_provider = StaticLayoutProvider(graph_layout=relation_graph.getNodeLayout())
+    graph.layout_provider = fixed_layout_provider
+    plot.renderers.append(graph)
+    st.bokeh_chart(plot)
 
     # person = st.selectbox("Select a person:", persons)
     #

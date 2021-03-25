@@ -84,6 +84,8 @@ dependencies:
   - zfp=0.5.5
   - zlib=1.2.11
   - zstd=1.4.9
+  - bokeh=2.0.0
+  - scikit-learn=0.24.1
   - pip:
     - altair==4.1.0
     - appnope==0.1.2

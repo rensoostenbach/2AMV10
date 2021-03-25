@@ -42,9 +42,6 @@ def write():
 
     image = st.selectbox("Select an image:", person.images)
 
-    st.image(image.getImageWithBoundingBoxesWithPredictionScoreAbove(confidence_threshold),
-             caption=image.getCaption(), use_column_width=True)
-
     for prediction in image.predictions:
         if prediction.score >= confidence_threshold:
             st.write(prediction.toHTML(), unsafe_allow_html=True)
