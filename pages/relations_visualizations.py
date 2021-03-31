@@ -6,7 +6,7 @@ from bokeh.models import StaticLayoutProvider
 
 import classes.Person as Person
 import classes.Object as Object
-import classes.BipartiteGraph as BipartiteGraph
+import classes.CytoscapeBipartiteGraph as BipartiteGraph
 import networkx as nx
 from bokeh.io import output_file, show
 from bokeh.plotting import figure, from_networkx
@@ -48,12 +48,12 @@ def write():
     objects = Object.getObjects()
 
     relation_graph = BipartiteGraph.BipartiteGraph(persons, objects, confidence_threshold, k)
-    plot = figure(x_range=(0, 8), y_range=(0, 25))
-    graph = from_networkx(relation_graph.graph, nx.spring_layout)
-    fixed_layout_provider = StaticLayoutProvider(graph_layout=relation_graph.getNodeLayout())
-    graph.layout_provider = fixed_layout_provider
-    plot.renderers.append(graph)
-    st.bokeh_chart(plot)
+    # plot = figure(x_range=(0, 8), y_range=(0, 25))
+    # graph = from_networkx(relation_graph.graph, nx.spring_layout)
+    # fixed_layout_provider = StaticLayoutProvider(graph_layout=relation_graph.getNodeLayout())
+    # graph.layout_provider = fixed_layout_provider
+    # plot.renderers.append(graph)
+    st.plotly_chart(relation_graph)
 
     # person = st.selectbox("Select a person:", persons)
     #

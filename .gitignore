@@ -1,8 +1,12 @@
-/data/*
+/data/images/
+/data/raw/*/*.csv
+/data/raw/*/*.db
+/data/raw/*/*.txt
+/data/raw/TrainingImages/*/*.xml
+/data/raw/TrainingImages/*/*.db
 # Editors
 .vscode/
 .idea/
 *.pt
 !yolov5l_weights.pt
-*.pyc
 *.pyc
