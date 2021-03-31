@@ -32,7 +32,8 @@ conda env create -f 2amv10.yml
 Navigate to the folder where this repo is in, and run the following bash code to run the app:
 
 ```bash
-python app.py
+conda activate 2amv10
+python index.py
 ```
 
 Make sure to have the data in your repo folder as well, since we do not host it on Github. It should be in a map named
