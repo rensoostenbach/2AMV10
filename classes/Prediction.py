@@ -1,4 +1,5 @@
 import classes.BoundingBox as BoundingBox
+import dash_html_components as html
 
 LABELS = {0.0: 'birdCall',
           1.0: 'blueSunglasses',
@@ -63,3 +64,8 @@ class Prediction:
         b, g, r = self.bounding_box.color
         return f'<a style="color: rgb({r}, {g}, {b});">' + f"Label: {self.label} " \
                + f"</a>, score: {self.score}, relative bounding box: {self.bounding_box.__str__()}"
+
+    def toHTMLDash(self):
+        b, g, r = self.bounding_box.color
+        return html.P(children=[html.Div(children=f"Label: {self.label} ", style={"color": f"rgb({r}, {g}, {b})"}),
+                html.Div(children=f"score: {self.score}, relative bounding box: {self.bounding_box.__str__()}")])

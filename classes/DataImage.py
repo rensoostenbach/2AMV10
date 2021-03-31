@@ -44,9 +44,12 @@ class ImageByPerson(DataImage):
 
         self.person = person
         self.filepath = person.img_folder.joinpath(f"Person{person.id}_{id}")
+        self.githubURL = "https://raw.githubusercontent.com/rensoostenbach/2AMV10/olof"
         self.predictions = []
 
         self.setPredictions()
+
+        self.setGithubURL()
 
         self.filepath = str(self.filepath) + '.jpg'
 
@@ -63,6 +66,10 @@ class ImageByPerson(DataImage):
             bounding_box = BoundingBox(row[1].x, row[1].y, row[1].Width, row[1].Height, COLORS[i % len(COLORS)])
             prediction = Prediction(row[1].Label, row[1].Score, bounding_box)
             self.predictions.append(copy.deepcopy(prediction))
+
+    def setGithubURL(self):
+        for part in Path(self.filepath).parts[2:]:
+            self.githubURL += '/' + part
 
     def __getPredictionsFromFile(self):
         predictions = pd.DataFrame()
@@ -198,6 +205,7 @@ class ObjectImage(DataImage):
 
         self.object = object
         self.filepath = Path("../2AMV10/data/raw/TrainingImages/" + object.name + "/" + object.name + "_" + str(id) + '.jpg')
+        self.githubURL = "https://raw.githubusercontent.com/rensoostenbach/2AMV10/olof/data/raw/TrainingImages/" + object.name + '/' + object.name + '_1.jpg'
 
     def __str__(self):
         return f"Image {self.id}"

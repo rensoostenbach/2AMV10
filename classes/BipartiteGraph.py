@@ -26,14 +26,14 @@ class BipartiteGraph:
         self.object_nodes = []
         self.graph = nx.Graph()
 
-        self.figure = plt.figure(figsize=(self.GRAPH_WIDTH, self.GRAPH_HEIGHT))
-        self.ax = plt.subplot(111)
-        self.ax.set_aspect('equal')
-
+        # self.figure = plt.figure(figsize=(self.GRAPH_WIDTH, self.GRAPH_HEIGHT))
+        # self.ax = plt.subplot(111)
+        # self.ax.set_aspect('equal')
+        #
         self.__addPersonNodes(persons)
         self.__addObjectNodes(objects)
         self.__addRelations(persons, objects, confidence_threshold, k)
-        self.__drawGraph()
+        # self.__drawGraph()
 
     def getFigure(self):
         return self.figure

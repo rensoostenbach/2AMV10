@@ -1,30 +1,9 @@
-import streamlit as st
-import awesome_streamlit as ast
-import pages.relations_visualizations
-import pages.people
-import pages.objects
-import pages.test
+import dash
+import dash_bootstrap_components as dbc
 
-st.set_page_config(layout="wide")
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', dbc.themes.BOOTSTRAP]
 
-PAGES = {
-    "People": pages.people,
-    "Objects": pages.objects,
-    "People and predicted objects": pages.relations_visualizations,
-    "Test": pages.test
-}
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-
-def main():
-    """Main function of the App"""
-    st.sidebar.title("Navigation")
-    selection = st.sidebar.radio("Go to", list(PAGES.keys()), 3)
-
-    page = PAGES[selection]
-
-    with st.spinner(f"Loading {selection} ..."):
-        ast.shared.components.write_page(page)
-
-
-if __name__ == "__main__":
-    main()
+server = app.server
+app.config.suppress_callback_exceptions = True

@@ -1,13 +1,8 @@
-import copy
-import pandas as pd
-import numpy as np
-import streamlit as st
-import random
-import os
-from PIL import Image
 from pathlib import Path
-import classes.DataImage as DataImage
-import classes.Person as Person
+
+import streamlit as st
+from PIL import Image
+
 import classes.Object as Object
 import pytorch_cnn_visualizations.src.gradcam as gradcam
 

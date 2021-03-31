@@ -19,6 +19,13 @@ class Person:
         for image_id in self.__getImageIds():
             self.images.append(DataImage.ImageByPerson(image_id, self))
 
+    def getImage(self, image_id):
+        for image in self.images:
+            if image.id == image_id:
+                return image
+
+        return None
+
     def __getImageIds(self):
         img_ids = [folder.stem.replace(f'Person{self.id}_', '') for folder in self.img_folder.iterdir()
             if folder.match(f'Person{self.id}_*.jpg')]
@@ -28,7 +35,7 @@ class Person:
 
 
 def getPersonsFrom(data_folder):
-    person_ids = __getPersonIdsFrom(data_folder)
+    person_ids = getPersonIdsFrom(data_folder)
     persons = []
 
     for person_id in person_ids:
@@ -39,7 +46,7 @@ def getPersonsFrom(data_folder):
     return persons
 
 
-def __getPersonIdsFrom(data_folder):
+def getPersonIdsFrom(data_folder):
     person_ids = [folder.stem.replace('Person', '') for folder in data_folder.iterdir() if folder.match('Person*')]
 
     for i, person_id in enumerate(person_ids):
@@ -48,6 +55,13 @@ def __getPersonIdsFrom(data_folder):
             person_ids[i] = person_id[:idx]
 
     return np.unique(person_ids)
+
+
+def getPersonFrom(person_id, data_folder):
+    img_folder = __getImgFolder(data_folder, person_id)
+    new_person = Person(person_id, img_folder)
+
+    return copy.deepcopy(new_person)
 
 
 def __getImgFolder(data_folder, person_id):
