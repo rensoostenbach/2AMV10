@@ -97,7 +97,7 @@ def update_output(model_filepath, person_id, image_id, confidence_threshold):
             predictions.append(prediction.toHTMLDash())
 
     if predictions == []:
-        predictions.append(html.P('There are no predictions above the chosen confidence threshold.'))
+        predictions.append(html.Div(children=html.P('There are no predictions above the chosen confidence threshold.'), style={'width':'100%'}))
 
     if model_filepath.match('*yolov5l_100epochs_16batchsize/inference/output*'):
         image_component = getGradcamImages(confidence_threshold, image, person)

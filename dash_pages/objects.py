@@ -61,8 +61,12 @@ def update_object_dropdown(gradcam_comp, selected_object):
     Output('image-1-dropdown', 'value'),
     Output('image-2-dropdown', 'value'),
     Output('image-dropdown', 'hidden'),
-    Input('gradcam-computation', 'value'))
-def update_images_dropdown(must_compute):
+    Input('gradcam-computation', 'value'),
+    Input('gradcam-group', 'hidden'))
+def update_images_dropdown(must_compute, is_hidden):
+    if is_hidden:
+        raise PreventUpdate
+
     if must_compute:
         image_options = []
         for i in range(1, 13):
