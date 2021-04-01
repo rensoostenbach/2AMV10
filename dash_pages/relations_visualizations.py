@@ -12,6 +12,12 @@ from classes.BipartiteGraph import *
 from classes.Person import *
 from classes.Object import *
 
+numbers = { 0 : 'zero', 1 : 'one', 2 : 'two', 3 : 'three', 4 : 'four', 5 : 'five',
+          6 : 'six', 7 : 'seven', 8 : 'eight', 9 : 'nine', 10 : 'ten',
+          11 : 'eleven', 12 : 'twelve', 13 : 'thirteen', 14 : 'fourteen',
+          15 : 'fifteen', 16 : 'sixteen', 17 : 'seventeen', 18 : 'eighteen',
+          19 : 'nineteen', 20: 'twenty'}
+
 stylesheet = [{
     'selector': 'node',
     'style': {
@@ -80,16 +86,28 @@ stylesheet = [{
         'style': {
             'line-color': 'red'
         }
-    }
+    },
 ]
 
+colors = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#ffffff', '#000000']
+
+for number in numbers:
+    stylesheet.append({
+        'selector': '.' + numbers[number],
+        'style': {
+            'background-color': colors[number]
+        }
+    },)
+
+print(stylesheet)
 
 def getContent():
     title = html.H1('People and their relationship to objects', style={"font-size": "40px"})
     desc = html.P('This bipartite graph shows the relation of people to objects. Clicking on a person will highlight'
                   ' the edges to the objects he/she is related to. Clicking on an object will highlight the edges to'
-                  ' the people this object is related to. A yellow edge has low confidence. A green edge has high'
-                  ' confidence.', style={'font-size': '15px'})
+                  ' the people this object is related to. The color of an edge shows its confidence, which is a'
+                  ' gradient going from low to high confidence: red, orange, yellow, green.'
+                  ' The color of a node represents its cluster.', style={'font-size': '15px'})
 
     graph = dcc.Loading(
         id='graph',
@@ -113,8 +131,8 @@ def getContent():
     Input('clusters', 'value'))
 def update_graph(model_path, confidence_threshold, k):
     model_path = Path(model_path)
-    persons = getPersonsFrom(model_path)
     objects = getObjects()
+    persons = getPersonsFrom(model_path, objects, k)
 
     elements = getElementsFrom(persons, objects, confidence_threshold)
 
@@ -181,8 +199,8 @@ def getElementsFrom(persons, objects, confidence_threshold):
             'data': {'id': 'objects', 'label': 'Objects'}
         }]
 
-    person_nodes = [{'data': {'id': person.id, 'label': person.id, 'parent': 'persons'},
-                     'position': {'x': -1000, 'y': (i + 1) * 100}}
+    person_nodes = [{'data': {'id': person.id, 'label': person.cluster, 'parent': 'persons'},
+                     'position': {'x': -1000, 'y': (i + 1) * 100}, 'classes': numbers[int(person.cluster)]}
                     for i, person in enumerate(persons)]
 
     object_nodes = [{'classes': 'object',

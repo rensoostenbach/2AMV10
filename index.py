@@ -78,7 +78,7 @@ sidebar = html.Div(
         html.Div(id='cluster-group', children=[
             html.H3('Select the number of clusters'),
             dcc.Slider(id='clusters',
-                       min=1, max=40, step=1, value=1,
+                       min=1, max=20, step=1, value=1,
                        marks={1: '1', 10: '10', 20: '20', 30: '30', 40: '40'})
         ], hidden=True)
     ],

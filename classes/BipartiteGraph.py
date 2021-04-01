@@ -60,7 +60,8 @@ class BipartiteGraph:
                         self.graph.add_edge(person.id, prediction.label, weight=prediction.score)
         kmeans = KMeans(n_clusters=k)
         kmeans.fit(persons_with_total_item_scores)
-        self.person_node_colors = kmeans.predict(persons_with_total_item_scores)
+        for person in persons:
+            person.cluster = kmeans.predict(persons_with_total_item_scores.loc[int(person.id) - 1])
 
     def __drawGraph(self):
         self.__addColorBar()

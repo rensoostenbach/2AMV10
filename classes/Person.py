@@ -1,7 +1,11 @@
 import copy
+
+from sklearn.cluster import KMeans
+
 import classes.DataImage as DataImage
 from pathlib import Path
 import numpy as np
+import pandas as pd
 
 
 class Person:
@@ -9,6 +13,7 @@ class Person:
         self.id = id
         self.img_folder = folder
         self.images = []
+        self.cluster = None
 
         self.setImages()
 
@@ -34,14 +39,26 @@ class Person:
         return img_ids
 
 
-def getPersonsFrom(data_folder):
+def getPersonsFrom(data_folder, objects, k):
     person_ids = getPersonIdsFrom(data_folder)
     persons = []
+    persons_with_total_item_scores = pd.DataFrame(0, index=np.arange(40), columns=[obj.name for obj in objects])
 
     for person_id in person_ids:
         img_folder = __getImgFolder(data_folder, person_id)
         new_person = Person(person_id, img_folder)
+        for img in new_person.images:
+            for prediction in img.predictions:
+                persons_with_total_item_scores.loc[int(new_person.id) - 1, prediction.label] += prediction.score
         persons.append(copy.deepcopy(new_person))
+
+    kmeans = KMeans(n_clusters=k)
+    kmeans.fit(persons_with_total_item_scores)
+
+    for person in persons:
+        person.cluster = kmeans.predict(persons_with_total_item_scores.loc[int(person.id) - 1].values.reshape(1, -1))
+        if person.cluster == 1:
+            print(persons_with_total_item_scores.loc[int(person.id) - 1].values.reshape(1, -1))
 
     return persons
 
