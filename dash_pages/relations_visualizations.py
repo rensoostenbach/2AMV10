@@ -136,6 +136,11 @@ def color_children(tapNodeData):
                 'style': {
                     'opacity': '0.03'
                 },
+            }, {
+                'selector': f'edge[source == "{tapNodeData["id"]}"]',
+                'style': {
+                    'line-width': '6'
+                },
             }]
             selected_person = tapNodeData['id']
         else:
@@ -144,6 +149,11 @@ def color_children(tapNodeData):
                 'style': {
                     'opacity': '0.03'
                 }
+            }, {
+                'selector': f'edge[source == "{tapNodeData["id"]}"]',
+                'style': {
+                    'line-width': '6'
+                },
             }]
             selected_object = tapNodeData['id']
 
