@@ -7,6 +7,7 @@ from dash.dependencies import Input, Output
 import dash_pages.objects as objects
 import dash_pages.people as people
 import dash_pages.relations_visualizations as relations
+import dash_pages.distributions as distributions
 
 from app import app
 
@@ -47,6 +48,7 @@ sidebar = html.Div(
                 dbc.NavLink("People", href="/", active="exact"),
                 dbc.NavLink("Objects", href="/objects", active="exact"),
                 dbc.NavLink("Relationship between person and object", href="/relations_visualizations", active="exact"),
+                dbc.NavLink("Distributions", href="/distributions", active="exact")
             ],
             vertical=True,
             pills=True,
@@ -74,6 +76,15 @@ sidebar = html.Div(
                            labelStyle={'display': 'block'})
         ], hidden=True),
         html.P(),
+        html.Div(id='distribution-group', children=[
+            html.H3('People or objects'),
+            html.P('Choose whether you want people or objects on the x-axis'),
+            dcc.RadioItems(id='distribution-selection',
+                           options=[{'label': 'People', 'value': 0}, {'label': 'Objects', 'value': 1}],
+                           value=0,
+                           labelStyle={'display': 'block'})
+        ], hidden=True),
+        html.P(),
         html.Div(id='cluster-group', children=[
             html.H3('Select the number of clusters'),
             dcc.Slider(id='clusters',
@@ -94,15 +105,18 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
     Output("confidence-threshold-group", "hidden"),
     Output("model-group", "hidden"),
     Output("gradcam-group", "hidden"),
+    Output("distribution-group", "hidden"),
     Output("cluster-group", "hidden"),
     [Input("url", "pathname")])
 def render_page_content(pathname):
     if pathname == "/":
-        return people.getContent(), False, False, True, True
+        return people.getContent(), False, False, True, True, True
     elif pathname == "/objects":
-        return objects.getContent(), True, True, False, True
+        return objects.getContent(), True, True, False, True, True
     elif pathname == "/relations_visualizations":
-        return relations.getContent(), False, False, True, False
+        return relations.getContent(), False, False, True, True, False
+    elif pathname == "/distributions":
+        return distributions.getContent(), False, False, True, False, True
     # If the user tries to reach a different page, return a 404 message
     return dbc.Jumbotron(
         [
