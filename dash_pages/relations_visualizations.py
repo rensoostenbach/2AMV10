@@ -86,12 +86,24 @@ stylesheet = [{
 
 def getContent():
     title = html.H1('People and their relationship to objects', style={"font-size": "40px"})
+    desc = html.P('This bipartite graph shows the relation of people to objects. Clicking on a person will highlight'
+                  ' the edges to the objects he/she is related to. Clicking on an object will highlight the edges to'
+                  ' the people this object is related to. A yellow edge has low confidence. A green edge has high'
+                  ' confidence.', style={'font-size': '15px'})
 
-    graph = dcc.Loading(id='graph',
-                        children=[html.Div(id='chosen-graph-model', children=[html.P('No model chosen yet'),
-                                                                              cyto.Cytoscape(id='bipartite-graph')])])
+    graph = dcc.Loading(
+        id='graph',
+        children=[html.Div(id='chosen-graph-model',
+                           children=[html.P('No model chosen yet'), cyto.Cytoscape(id='bipartite-graph')],
+                           style={'height': '100%'})],
+        style={'height': '100%'},
+    )
 
-    return html.Div(children=[title, graph])
+    return html.Div(children=[title, desc, graph], style={
+        'background-color': 'black',
+        'color': 'white',
+        'height': '950px',
+    })
 
 
 @app.callback(
@@ -110,7 +122,7 @@ def update_graph(model_path, confidence_threshold, k):
         id='bipartite-graph',
         elements=elements,
         layout={'name': 'preset'},
-        style={'width': '900px', 'height': '1500px'},
+        style={'width': '100%', 'height': '100%'},
         stylesheet=stylesheet
     )
 

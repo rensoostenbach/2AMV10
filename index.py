@@ -28,6 +28,7 @@ CONTENT_STYLE = {
     "margin-left": "32rem",
     "margin-right": "2rem",
     "padding": "2rem 1rem",
+    "height": '100%',
 }
 
 models = [{'label':'Given model', 'value': "../2AMV10/data/raw/"},

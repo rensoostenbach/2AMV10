@@ -40,9 +40,7 @@ def write():
     ########
     # PAGE #
     ########
-    st.markdown("""
-                # People and their relation to objects
-                """)
+    st.markdown('test')
 
     persons = Person.getPersonsFrom(model_path)
     objects = Object.getObjects()
