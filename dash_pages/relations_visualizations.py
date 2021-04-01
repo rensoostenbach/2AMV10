@@ -130,7 +130,7 @@ def getContent():
 def update_graph(model_path, confidence_threshold, k):
     model_path = Path(model_path)
     objects = getObjects()
-    persons = getPersonsFrom(model_path, objects, k)
+    persons = getPersonsFrom(model_path, objects, k, True)
 
     elements = getElementsFrom(persons, objects, confidence_threshold)
 
