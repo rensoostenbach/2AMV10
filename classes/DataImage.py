@@ -63,7 +63,11 @@ class ImageByPerson(DataImage):
         predictions = self.__getPredictionsFromFile()
 
         for i, row in enumerate(predictions.iterrows()):
+            if row[1].x < 0:
+                row[1].x = 0
             bounding_box = BoundingBox(row[1].x, row[1].y, row[1].Width, row[1].Height, COLORS[i % len(COLORS)])
+            if self.__isRCNNModel():
+                row[1].Label -= 1
             prediction = Prediction(row[1].Label, row[1].Score, bounding_box)
             self.predictions.append(copy.deepcopy(prediction))
 
@@ -152,8 +156,7 @@ class ImageByPerson(DataImage):
         image_as_array = np.asarray(image)
         image_in_cv2_format = cv2.cvtColor(image_as_array, cv2.COLOR_RGB2BGR)
 
-        if not self.__isYoloModel(): # Yolo models have bounding boxes already drawn (only if the model predicts any)
-            self.__drawAllBoundingBoxesAndPredictionsOn(image_in_cv2_format, valid_predictions)
+        self.__drawAllBoundingBoxesAndPredictionsOn(image_in_cv2_format, valid_predictions)
 
         image_as_array = cv2.cvtColor(image_in_cv2_format, cv2.COLOR_BGR2RGB)
         return Image.fromarray(image_as_array)
@@ -194,6 +197,18 @@ class ImageByPerson(DataImage):
 
         for parent in parents:
             if parent.match('*yolo*'):
+                return True
+
+        return False
+
+    def __isRCNNModel(self):
+        if isinstance(self.filepath, str):
+            self.filepath = Path(self.filepath)
+
+        parents = self.filepath.parents
+
+        for parent in parents:
+            if parent.match('*rcnn*'):
                 return True
 
         return False

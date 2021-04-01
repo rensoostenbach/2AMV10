@@ -23,6 +23,8 @@ def getContent():
                 html.P('Select an image:'),
                 dcc.Dropdown(id='image-dropdown', clearable=False, style={"font-size": "20px", 'width': "300px"}),
                 html.P(),
+                html.P('All the coordinates that are given, are relative to the size of the picture where (0,'
+                       '0) resembles the top left corner and (1,1) the bottom right corner.'),
                 dcc.Loading(id="load-image",
                             children=[html.Div(id='chosen-image', children=[html.P('No image chosen yet')])])
                 ]
@@ -33,8 +35,9 @@ def getContent():
 @app.callback(
     Output('person-dropdown', 'options'),
     Output('person-dropdown', 'value'),
-    Input('model-dropdown', 'value'))
-def update_person_dropdown(model_filepath):
+    Input('model-dropdown', 'value'),
+    Input('selected-person', 'children'))
+def update_person_dropdown(model_filepath, selected_person):
     model_filepath = Path(model_filepath)
 
     person_ids = getPersonIdsFrom(model_filepath)
@@ -44,7 +47,10 @@ def update_person_dropdown(model_filepath):
     for person_id in person_ids:
         person_options.append({'label': f'Person {person_id}', 'value': person_id})
 
-    return person_options, person_options[0]['value']
+    if selected_person == "":
+        selected_person = person_options[0]['value']
+
+    return person_options, selected_person
 
 
 @app.callback(
@@ -90,13 +96,16 @@ def update_output(model_filepath, person_id, image_id, confidence_threshold):
         if prediction.score >= confidence_threshold:
             predictions.append(prediction.toHTMLDash())
 
+    if predictions == []:
+        predictions.append(html.Div(children=html.P('There are no predictions above the chosen confidence threshold.'), style={'width':'100%'}))
+
     if model_filepath.match('*yolov5l_100epochs_16batchsize/inference/output*'):
         image_component = getGradcamImages(confidence_threshold, image, person)
     else:
         image_component = html.Img(src=image.getImageWithBoundingBoxesWithPredictionScoreAbove(confidence_threshold),
                                    title=image.getCaption(), width="98%")
 
-    return [text, html.Div(children=predictions), image_component]
+    return [text, image_component, html.Div(children=predictions)]
 
 
 def getGradcamImages(confidence_threshold, image, person):

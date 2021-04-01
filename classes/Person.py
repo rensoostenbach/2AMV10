@@ -57,8 +57,6 @@ def getPersonsFrom(data_folder, objects, k):
 
     for person in persons:
         person.cluster = kmeans.predict(persons_with_total_item_scores.loc[int(person.id) - 1].values.reshape(1, -1))
-        if person.cluster == 1:
-            print(persons_with_total_item_scores.loc[int(person.id) - 1].values.reshape(1, -1))
 
     return persons
 

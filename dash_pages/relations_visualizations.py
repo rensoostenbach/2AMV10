@@ -19,11 +19,11 @@ numbers = { 0 : 'zero', 1 : 'one', 2 : 'two', 3 : 'three', 4 : 'four', 5 : 'five
           19 : 'nineteen', 20: 'twenty'}
 
 stylesheet = [{
-    'selector': 'node',
-    'style': {
-        'content': 'data(label)'
-    }
-},
+        'selector': 'node',
+        'style': {
+            'content': 'data(label)'
+        }
+    },
     {
         'selector': '.object',
         'style': {
@@ -99,8 +99,6 @@ for number in numbers:
         }
     },)
 
-print(stylesheet)
-
 def getContent():
     title = html.H1('People and their relationship to objects', style={"font-size": "40px"})
     desc = html.P('This bipartite graph shows the relation of people to objects. Clicking on a person will highlight'
@@ -140,7 +138,7 @@ def update_graph(model_path, confidence_threshold, k):
         id='bipartite-graph',
         elements=elements,
         layout={'name': 'preset'},
-        style={'width': '100%', 'height': '100%'},
+        style={'width': '100%', 'height': '1500px', 'background': 'black'},
         stylesheet=stylesheet
     )
 
@@ -148,31 +146,46 @@ def update_graph(model_path, confidence_threshold, k):
 
 
 @app.callback(Output('bipartite-graph', 'stylesheet'),
-              Input('bipartite-graph', 'mouseoverNodeData'),
+              Output('selected-person', 'children'),
+              Output('selected-object', 'children'),
               Input('bipartite-graph', 'tapNodeData'))
-def color_children(hoverNodeData, tapNodeData):
-    if not hoverNodeData:
-        return stylesheet
+def color_children(tapNodeData):
+    if not tapNodeData:
+        return stylesheet, "", ""
 
-    if 'parent' in hoverNodeData:
-        if hoverNodeData['parent'] == 'persons':
+    children_style = []
+    selected_person = ""
+    selected_object = ""
+
+    if 'parent' in tapNodeData:
+        if tapNodeData['parent'] == 'persons':
             children_style = [{
-                'selector': f'edge[source != "{hoverNodeData["id"]}"]',
+                'selector': f'edge[source != "{tapNodeData["id"]}"]',
                 'style': {
-                    'opacity': '0.02'
+                    'opacity': '0.03'
+                },
+            }, {
+                'selector': f'edge[source == "{tapNodeData["id"]}"]',
+                'style': {
+                    'line-width': '6'
                 },
             }]
+            selected_person = tapNodeData['id']
         else:
             children_style = [{
-                'selector': f'edge[target != "{hoverNodeData["id"]}"]',
+                'selector': f'edge[target != "{tapNodeData["id"]}"]',
                 'style': {
-                    'opacity': '0.02'
+                    'opacity': '0.03'
                 }
+            }, {
+                'selector': f'edge[source == "{tapNodeData["id"]}"]',
+                'style': {
+                    'line-width': '6'
+                },
             }]
-    else:
-        children_style = []
+            selected_object = tapNodeData['id']
 
-    return stylesheet + children_style
+    return stylesheet + children_style, selected_person, selected_object
 
 
 def setStateWithTappedNode(tapNodeData):

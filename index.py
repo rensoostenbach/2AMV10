@@ -7,6 +7,8 @@ from dash.dependencies import Input, Output
 import dash_pages.objects as objects
 import dash_pages.people as people
 import dash_pages.relations_visualizations as relations
+import dash_pages.distributions as distributions
+from dash.exceptions import PreventUpdate
 
 from app import app
 
@@ -48,6 +50,7 @@ sidebar = html.Div(
                 dbc.NavLink("People", href="/", active="exact"),
                 dbc.NavLink("Objects", href="/objects", active="exact"),
                 dbc.NavLink("Relationship between person and object", href="/relations_visualizations", active="exact"),
+                dbc.NavLink("Distributions", href="/distributions", active="exact")
             ],
             vertical=True,
             pills=True,
@@ -58,7 +61,8 @@ sidebar = html.Div(
             html.H3('Confidence threshold'),
             dcc.Slider(id='confidence-threshold', min=0.085, max=1, step=0.001, value=0.5,
                        marks={0.1: '0.1', 0.2: '0.2', 0.3: '0.3', 0.4: '0.4', 0.5: '0.5', 0.6: '0.6', 0.7: '0.7', 0.8: '0.8', 0.9: '0.9', 1: '1.0'}),
-            html.Div(id='confidence-threshold-output')]
+            html.Div(id='confidence-threshold-output'),
+            html.P('All predictions with a score below this threshold are not shown.')]
         ),
         html.P(),
         html.Div(id='model-group', children=[
@@ -75,12 +79,23 @@ sidebar = html.Div(
                            labelStyle={'display': 'block'})
         ], hidden=True),
         html.P(),
+        html.Div(id='distribution-group', children=[
+            html.H3('People or objects'),
+            html.P('Choose whether you want people or objects on the x-axis'),
+            dcc.RadioItems(id='distribution-selection',
+                           options=[{'label': 'People', 'value': 0}, {'label': 'Objects', 'value': 1}],
+                           value=0,
+                           labelStyle={'display': 'block'})
+        ], hidden=True),
+        html.P(),
         html.Div(id='cluster-group', children=[
             html.H3('Select the number of clusters'),
             dcc.Slider(id='clusters',
                        min=1, max=20, step=1, value=1,
                        marks={1: '1', 10: '10', 20: '20', 30: '30', 40: '40'})
-        ], hidden=True)
+        ], hidden=True),
+        html.Div(id='selected-person', children="", hidden=True),
+        html.Div(id='selected-object', children="", hidden=True)
     ],
     style=SIDEBAR_STYLE,
 )
@@ -95,15 +110,18 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
     Output("confidence-threshold-group", "hidden"),
     Output("model-group", "hidden"),
     Output("gradcam-group", "hidden"),
+    Output("distribution-group", "hidden"),
     Output("cluster-group", "hidden"),
     [Input("url", "pathname")])
 def render_page_content(pathname):
     if pathname == "/":
-        return people.getContent(), False, False, True, True
+        return people.getContent(), False, False, True, True, True
     elif pathname == "/objects":
-        return objects.getContent(), True, True, False, True
+        return objects.getContent(), True, True, False, True, True
     elif pathname == "/relations_visualizations":
-        return relations.getContent(), False, False, True, False
+        return relations.getContent(), False, False, True, True, False
+    elif pathname == "/distributions":
+        return distributions.getContent(), False, False, True, False, True
     # If the user tries to reach a different page, return a 404 message
     return dbc.Jumbotron(
         [
