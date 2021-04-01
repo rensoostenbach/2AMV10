@@ -116,8 +116,6 @@ def getContent():
     )
 
     return html.Div(children=[title, desc, graph], style={
-        'background-color': 'black',
-        'color': 'white',
         'height': '950px',
     })
 
@@ -212,7 +210,7 @@ def getElementsFrom(persons, objects, confidence_threshold):
             'data': {'id': 'objects', 'label': 'Objects'}
         }]
 
-    person_nodes = [{'data': {'id': person.id, 'label': person.cluster, 'parent': 'persons'},
+    person_nodes = [{'data': {'id': person.id, 'label': f"Person {person.id} in cluster {person.cluster}", 'parent': 'persons'},
                      'position': {'x': -1000, 'y': (i + 1) * 100}, 'classes': numbers[int(person.cluster)]}
                     for i, person in enumerate(persons)]
 
