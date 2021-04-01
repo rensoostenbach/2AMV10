@@ -27,8 +27,9 @@ def getContent():
 @app.callback(
     Output('object-dropdown', 'options'),
     Output('object-dropdown', 'value'),
-    Input('gradcam-computation', 'value'))
-def update_object_dropdown(gradcam_comp):
+    Input('gradcam-computation', 'value'),
+    Input('selected-object', 'children'))
+def update_object_dropdown(gradcam_comp, selected_object):
     data_folder = Path("../2AMV10/data/raw/TrainingImages/")
     objects = getObjectNamesFrom(data_folder)
 
@@ -37,7 +38,10 @@ def update_object_dropdown(gradcam_comp):
     for object_name in objects:
         object_options.append({'label': f'{object_name}', 'value': object_name})
 
-    return object_options, object_options[0]['value']
+    if selected_object == "":
+        selected_object = object_options[0]['value']
+
+    return object_options, selected_object
 
 
 @app.callback(

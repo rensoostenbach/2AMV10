@@ -7,6 +7,7 @@ from dash.dependencies import Input, Output
 import dash_pages.objects as objects
 import dash_pages.people as people
 import dash_pages.relations_visualizations as relations
+from dash.exceptions import PreventUpdate
 
 from app import app
 
@@ -57,7 +58,8 @@ sidebar = html.Div(
             html.H3('Confidence threshold'),
             dcc.Slider(id='confidence-threshold', min=0.085, max=1, step=0.001, value=0.5,
                        marks={0.1: '0.1', 0.2: '0.2', 0.3: '0.3', 0.4: '0.4', 0.5: '0.5', 0.6: '0.6', 0.7: '0.7', 0.8: '0.8', 0.9: '0.9', 1: '1.0'}),
-            html.Div(id='confidence-threshold-output')]
+            html.Div(id='confidence-threshold-output'),
+            html.P('All predictions with a score below this threshold are not shown.')]
         ),
         html.P(),
         html.Div(id='model-group', children=[
@@ -79,7 +81,9 @@ sidebar = html.Div(
             dcc.Slider(id='clusters',
                        min=1, max=40, step=1, value=1,
                        marks={1: '1', 10: '10', 20: '20', 30: '30', 40: '40'})
-        ], hidden=True)
+        ], hidden=True),
+        html.Div(id='selected-person', children="", hidden=True),
+        html.Div(id='selected-object', children="", hidden=True)
     ],
     style=SIDEBAR_STYLE,
 )

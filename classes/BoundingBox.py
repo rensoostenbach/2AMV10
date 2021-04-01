@@ -1,7 +1,19 @@
 class BoundingBox():
     def __init__(self, x, y, width, height, color):
-        self.x = x
-        self.y = y
+        if x < 0:
+            self.x = x
+        elif x > 1:
+            self.x = 1
+        else:
+            self.x = x
+
+        if y < 0:
+            self.y = 0
+        if y > 1:
+            self.y = 1
+        else:
+            self.y = y
+
         self.width = width
         self.height = height
         self.color = color
