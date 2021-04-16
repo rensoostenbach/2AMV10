@@ -133,4 +133,4 @@ def run(original_image, obj, object_class, number, **person):
     cam = grad_cam.generate_cam(prep_img, target_class=object_class)
     # Save mask
     save_class_activation_images(original_image, cam, file_name_to_export)
-    print('Grad cam completed')
+
