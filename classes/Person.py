@@ -18,7 +18,7 @@ class Person:
         self.setImages()
 
     def __str__(self):
-        return f'Person {self.id}'
+        return f"Person {self.id}"
 
     def setImages(self):
         for image_id in self.__getImageIds():
@@ -32,8 +32,11 @@ class Person:
         return None
 
     def __getImageIds(self):
-        img_ids = [folder.stem.replace(f'Person{self.id}_', '') for folder in self.img_folder.iterdir()
-            if folder.match(f'Person{self.id}_*.jpg')]
+        img_ids = [
+            folder.stem.replace(f"Person{self.id}_", "")
+            for folder in self.img_folder.iterdir()
+            if folder.match(f"Person{self.id}_*.jpg")
+        ]
         img_ids.sort()
 
         return img_ids
@@ -43,7 +46,9 @@ def getPersonsFrom(data_folder, objects=None, k=None, compute_clusters=False):
     person_ids = getPersonIdsFrom(data_folder)
     persons = []
     if compute_clusters:
-        persons_with_total_item_scores = pd.DataFrame(0, index=np.arange(40), columns=[obj.name for obj in objects])
+        persons_with_total_item_scores = pd.DataFrame(
+            0, index=np.arange(40), columns=[obj.name for obj in objects]
+        )
 
     for person_id in person_ids:
         img_folder = __getImgFolder(data_folder, person_id)
@@ -51,7 +56,9 @@ def getPersonsFrom(data_folder, objects=None, k=None, compute_clusters=False):
         if compute_clusters:
             for img in new_person.images:
                 for prediction in img.predictions:
-                    persons_with_total_item_scores.loc[int(new_person.id) - 1, prediction.label] += prediction.score
+                    persons_with_total_item_scores.loc[
+                        int(new_person.id) - 1, prediction.label
+                    ] += prediction.score
         persons.append(copy.deepcopy(new_person))
 
     if compute_clusters:
@@ -59,16 +66,24 @@ def getPersonsFrom(data_folder, objects=None, k=None, compute_clusters=False):
         kmeans.fit(persons_with_total_item_scores)
 
         for person in persons:
-            person.cluster = kmeans.predict(persons_with_total_item_scores.loc[int(person.id) - 1].values.reshape(1, -1))
+            person.cluster = kmeans.predict(
+                persons_with_total_item_scores.loc[int(person.id) - 1].values.reshape(
+                    1, -1
+                )
+            )
 
     return persons
 
 
 def getPersonIdsFrom(data_folder):
-    person_ids = [folder.stem.replace('Person', '') for folder in data_folder.iterdir() if folder.match('Person*')]
+    person_ids = [
+        folder.stem.replace("Person", "")
+        for folder in data_folder.iterdir()
+        if folder.match("Person*")
+    ]
 
     for i, person_id in enumerate(person_ids):
-        idx = person_id.find('_')
+        idx = person_id.find("_")
         if idx != -1:
             person_ids[i] = person_id[:idx]
 
@@ -84,6 +99,6 @@ def getPersonFrom(person_id, data_folder):
 
 def __getImgFolder(data_folder, person_id):
     if data_folder == Path("../2AMV10/data/raw/"):
-        data_folder = data_folder.joinpath(f'Person{person_id}/')
+        data_folder = data_folder.joinpath(f"Person{person_id}/")
 
     return data_folder

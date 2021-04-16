@@ -19,8 +19,11 @@ class Object:
             self.images.append(DataImage.ObjectImage(image_id, self))
 
     def __getImageIds(self):
-        img_ids = [folder.stem.replace(f'{self.name}_', '') for folder in self.filepath.iterdir()
-                   if folder.match(f'{self.name}_*.jpg')]
+        img_ids = [
+            folder.stem.replace(f"{self.name}_", "")
+            for folder in self.filepath.iterdir()
+            if folder.match(f"{self.name}_*.jpg")
+        ]
         img_ids.sort()
 
         return img_ids
@@ -37,7 +40,9 @@ def getObjects():
 
 
 def getObjectNamesFrom(data_folder):
-    object_names = [folder.stem for folder in data_folder.iterdir() if not folder.match('*.DS*')]
+    object_names = [
+        folder.stem for folder in data_folder.iterdir() if not folder.match("*.DS*")
+    ]
     object_names.sort()
     return object_names
 

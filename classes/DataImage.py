@@ -1,13 +1,15 @@
-from abc import ABC, abstractproperty, abstractmethod
-import pandas as pd
-from pathlib import Path
-from classes.Prediction import Prediction
-from classes.BoundingBox import BoundingBox
-from PIL import Image
-import numpy as np
 import copy
-import cv2
+from abc import ABC, abstractmethod
 from math import ceil
+from pathlib import Path
+
+import cv2
+import numpy as np
+import pandas as pd
+from PIL import Image
+
+from classes.BoundingBox import BoundingBox
+from classes.Prediction import Prediction
 
 COLORS = [
     (123, 140, 191),
@@ -21,14 +23,14 @@ COLORS = [
     (41, 43, 81),
     (183, 172, 140),
     (0, 255, 0),
-    (255, 0, 0)
+    (255, 0, 0),
 ]
 
 
 class DataImage(ABC):
     def __init__(self, id):
         self.id = id
-        self.filepath = ''
+        self.filepath = ""
 
     def get(self):
         return Image.open(self.filepath)
@@ -44,7 +46,9 @@ class ImageByPerson(DataImage):
 
         self.person = person
         self.filepath = person.img_folder.joinpath(f"Person{person.id}_{id}")
-        self.imagepath = Path("../2AMV10/data/raw/").joinpath(f"Person{person.id}/Person{person.id}_{id}.jpg")
+        self.imagepath = Path("../2AMV10/data/raw/").joinpath(
+            f"Person{person.id}/Person{person.id}_{id}.jpg"
+        )
         self.githubURL = "https://raw.githubusercontent.com/rensoostenbach/2AMV10/olof"
         self.predictions = []
 
@@ -52,10 +56,10 @@ class ImageByPerson(DataImage):
 
         self.setGithubURL()
 
-        self.filepath = str(self.filepath) + '.jpg'
+        self.filepath = str(self.filepath) + ".jpg"
 
     def __str__(self):
-        return f'Image {self.id}'
+        return f"Image {self.id}"
 
     def getCaption(self):
         return f"Image {self.id} by person {self.person.id}"
@@ -66,7 +70,9 @@ class ImageByPerson(DataImage):
         for i, row in enumerate(predictions.iterrows()):
             if row[1].x < 0:
                 row[1].x = 0
-            bounding_box = BoundingBox(row[1].x, row[1].y, row[1].Width, row[1].Height, COLORS[i % len(COLORS)])
+            bounding_box = BoundingBox(
+                row[1].x, row[1].y, row[1].Width, row[1].Height, COLORS[i % len(COLORS)]
+            )
             if self.__isRCNNModel():
                 row[1].Label -= 1
             prediction = Prediction(row[1].Label, row[1].Score, bounding_box)
@@ -74,7 +80,7 @@ class ImageByPerson(DataImage):
 
     def setGithubURL(self):
         for part in Path(self.filepath).parts[2:]:
-            self.githubURL += '/' + part
+            self.githubURL += "/" + part
 
     def __getPredictionsFromFile(self):
         predictions = pd.DataFrame()
@@ -90,65 +96,75 @@ class ImageByPerson(DataImage):
         return predictions
 
     def __getPredictionsFromCSV(self):
-        predictions = pd.read_csv(self.filepath.__str__() + '.csv')
+        predictions = pd.read_csv(self.filepath.__str__() + ".csv")
 
         self.__makeCoordinatesRelative(predictions)
         predictions = self.__formatPredictionsDataframe(predictions)
 
-        return predictions[predictions['Score'] >= 0.085]
+        return predictions[predictions["Score"] >= 0.085]
 
     def __getPredictionsFromTxt(self):
         label_path = self.filepath.parents[0]
 
-        if label_path.joinpath('labels').exists():
-            label_path = label_path.joinpath('labels')
+        if label_path.joinpath("labels").exists():
+            label_path = label_path.joinpath("labels")
 
         predictions = pd.DataFrame()
 
         for file in label_path.iterdir():
-            if file.match(f'Person{self.person.id}_{self.id}*.txt'):
-                predictions = pd.read_table(file, delim_whitespace=True,
-                                            names=('Label', 'x', 'y', 'Width', 'Height', 'Score'))
-                pd.to_numeric(predictions['Score'])
+            if file.match(f"Person{self.person.id}_{self.id}*.txt"):
+                predictions = pd.read_table(
+                    file,
+                    delim_whitespace=True,
+                    names=("Label", "x", "y", "Width", "Height", "Score"),
+                )
+                pd.to_numeric(predictions["Score"])
 
         predictions = self.__formatBoundingBoxCoordinates(predictions)
 
-        return predictions[predictions['Score'] >= 0.085]
+        return predictions[predictions["Score"] >= 0.085]
 
     def __makeCoordinatesRelative(self, predictions):
-        image_size = Image.open(self.filepath.__str__() + '.jpg').size
+        image_size = Image.open(self.filepath.__str__() + ".jpg").size
         try:
-            predictions['x'] = pd.to_numeric(predictions['x']) / image_size[0]
-            predictions['y'] = pd.to_numeric(predictions['y']) / image_size[1]
-            predictions['Width'] = pd.to_numeric(predictions['Width']) / image_size[0]
-            predictions['Height'] = pd.to_numeric(predictions['Height']) / image_size[0]
+            predictions["x"] = pd.to_numeric(predictions["x"]) / image_size[0]
+            predictions["y"] = pd.to_numeric(predictions["y"]) / image_size[1]
+            predictions["Width"] = pd.to_numeric(predictions["Width"]) / image_size[0]
+            predictions["Height"] = pd.to_numeric(predictions["Height"]) / image_size[0]
         except:
-            predictions['x'] = 0
-            predictions['y'] = 0
-            predictions['Width'] = pd.to_numeric(predictions['Width']) / image_size[0]
-            predictions['Height'] = pd.to_numeric(predictions['Height']) / image_size[0]
+            predictions["x"] = 0
+            predictions["y"] = 0
+            predictions["Width"] = pd.to_numeric(predictions["Width"]) / image_size[0]
+            predictions["Height"] = pd.to_numeric(predictions["Height"]) / image_size[0]
 
     def __formatPredictionsDataframe(self, predictions):
         while predictions.shape[1] < 6:
             predictions[predictions.shape[1]] = 0
 
-        predictions.columns=['x', 'y', 'Width', 'Height', 'Score', 'Label']
+        predictions.columns = ["x", "y", "Width", "Height", "Score", "Label"]
 
         return predictions
 
     def __formatBoundingBoxCoordinates(self, predictions):
         if self.__isYoloModel():
-            predictions['x'] -= predictions['Width']/2
-            predictions['y'] -= predictions['Height']/2
+            predictions["x"] -= predictions["Width"] / 2
+            predictions["y"] -= predictions["Height"] / 2
         else:
-            predictions.rename(columns={'x': 'y', 'y': 'x', 'Width': 'Height', 'Height': 'Width'}, inplace=True)
-            predictions['Width'] = predictions['Width'] - predictions['x']
-            predictions['Height'] = predictions['Height'] - predictions['y']
+            predictions.rename(
+                columns={"x": "y", "y": "x", "Width": "Height", "Height": "Width"},
+                inplace=True,
+            )
+            predictions["Width"] = predictions["Width"] - predictions["x"]
+            predictions["Height"] = predictions["Height"] - predictions["y"]
 
         return predictions
 
     def getImageWithBoundingBoxesWithPredictionScoreAbove(self, confidence_threshold):
-        valid_predictions = [prediction for prediction in self.predictions if prediction.score >= confidence_threshold]
+        valid_predictions = [
+            prediction
+            for prediction in self.predictions
+            if prediction.score >= confidence_threshold
+        ]
 
         with Image.open(self.imagepath) as image:
             return self.__drawBoundingBoxesForPredictionsOn(image, valid_predictions)
@@ -157,7 +173,9 @@ class ImageByPerson(DataImage):
         image_as_array = np.asarray(image)
         image_in_cv2_format = cv2.cvtColor(image_as_array, cv2.COLOR_RGB2BGR)
 
-        self.__drawAllBoundingBoxesAndPredictionsOn(image_in_cv2_format, valid_predictions)
+        self.__drawAllBoundingBoxesAndPredictionsOn(
+            image_in_cv2_format, valid_predictions
+        )
 
         image_as_array = cv2.cvtColor(image_in_cv2_format, cv2.COLOR_BGR2RGB)
         return Image.fromarray(image_as_array)
@@ -171,8 +189,12 @@ class ImageByPerson(DataImage):
 
         self.__drawBoundingBoxOn(image, prediction.bounding_box.color, pt1, pt2)
 
-        self.__drawPredictionOn(image, prediction.bounding_box.color, prediction,
-                                prediction.bounding_box.getBottomLeftIntegerCoordinate(image))
+        self.__drawPredictionOn(
+            image,
+            prediction.bounding_box.color,
+            prediction,
+            prediction.bounding_box.getBottomLeftIntegerCoordinate(image),
+        )
 
     def __drawBoundingBoxOn(self, image, color, top_left, top_right):
         thickness = ceil(image.shape[1] / 250)
@@ -197,7 +219,7 @@ class ImageByPerson(DataImage):
         parents = self.filepath.parents
 
         for parent in parents:
-            if parent.match('*yolo*'):
+            if parent.match("*yolo*"):
                 return True
 
         return False
@@ -209,7 +231,7 @@ class ImageByPerson(DataImage):
         parents = self.filepath.parents
 
         for parent in parents:
-            if parent.match('*rcnn*'):
+            if parent.match("*rcnn*"):
                 return True
 
         return False
@@ -220,8 +242,22 @@ class ObjectImage(DataImage):
         super().__init__(id)
 
         self.object = object
-        self.filepath = Path("../2AMV10/data/raw/TrainingImages/" + object.name + "/" + object.name + "_" + str(id) + '.jpg')
-        self.githubURL = "https://raw.githubusercontent.com/rensoostenbach/2AMV10/olof/data/raw/TrainingImages/" + object.name + '/' + object.name + '_1.jpg'
+        self.filepath = Path(
+            "../2AMV10/data/raw/TrainingImages/"
+            + object.name
+            + "/"
+            + object.name
+            + "_"
+            + str(id)
+            + ".jpg"
+        )
+        self.githubURL = (
+            "https://raw.githubusercontent.com/rensoostenbach/2AMV10/olof/data/raw/TrainingImages/"
+            + object.name
+            + "/"
+            + object.name
+            + "_1.jpg"
+        )
 
     def __str__(self):
         return f"Image {self.id}"

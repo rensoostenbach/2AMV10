@@ -4,9 +4,14 @@
 /data/raw/*/*.txt
 /data/raw/TrainingImages/*/*.xml
 /data/raw/TrainingImages/*/*.db
+app_streamlit.py
+custom_components.py
+functions.py
+/pages
+
 # Editors
 .vscode/
 .idea/
 *.pt
 !yolov5l_weights.pt
-*.pyc
+.ipynb_checkpoints

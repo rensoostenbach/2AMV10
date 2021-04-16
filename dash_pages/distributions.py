@@ -46,33 +46,36 @@ def update_output(pers_obj, model_path, confidence_threshold):
     persons_ids = getPersonIdsFrom(model_path)
     objects = getObjectNamesFrom(Path("../2AMV10/data/raw/TrainingImages/"))
 
-    df = pd.DataFrame(0, columns=objects, index=persons_ids)
+    df = getDataframeWithObjectsPersonsAndPredictions(
+        confidence_threshold, objects, persons, persons_ids
+    )
 
-    df = getPredictions(df, confidence_threshold, persons)
-
+    bars = []
     if pers_obj == 0:  # Persons
-        go_bars = []
-        for object in objects:
-            go_bars.append(go.Bar(name=object, x=persons_ids, y=df[object]))
-
-        fig = go.Figure(data=go_bars)
-        # Change the bar mode
-        fig.update_layout(barmode="stack")
-        return fig
+        for obj in objects:
+            bars.append(go.Bar(name=obj, x=persons_ids, y=df[obj]))
     else:  # Objects
-        go_bars = []
         for person_id in persons_ids:
-            go_bars.append(go.Bar(name=person_id, x=objects, y=df.iloc[int(person_id)-1]))
+            bars.append(
+                go.Bar(name=person_id, x=objects, y=df.iloc[int(person_id) - 1])
+            )
 
-        fig = go.Figure(data=go_bars)
-        # Change the bar mode
-        fig.update_layout(barmode="stack")
-        return fig
+    fig = go.Figure(data=bars)
+    fig.update_layout(barmode="stack")
+    return fig
 
-def getPredictions(df, confidence_threshold, persons):
+
+def getDataframeWithObjectsPersonsAndPredictions(
+    confidence_threshold, objects, persons, persons_ids
+):
+    df = pd.DataFrame(0, columns=objects, index=persons_ids)
+    setPredictionsAboveConfidenceThreshold(df, confidence_threshold, persons)
+    return df
+
+
+def setPredictionsAboveConfidenceThreshold(df, confidence_threshold, persons):
     for person in persons:
         for img in person.images:
             for prediction in img.predictions:
                 if prediction.score >= confidence_threshold:
                     df[prediction.label][person.id] += 1
-    return df
