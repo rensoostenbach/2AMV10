@@ -49,8 +49,8 @@ sidebar = html.Div(
             [
                 dbc.NavLink("People", href="/", active="exact"),
                 dbc.NavLink("Objects", href="/objects", active="exact"),
+                dbc.NavLink("Distributions", href="/distributions", active="exact"),
                 dbc.NavLink("Relationship between person and object", href="/relations_visualizations", active="exact"),
-                dbc.NavLink("Distributions", href="/distributions", active="exact")
             ],
             vertical=True,
             pills=True,
@@ -139,4 +139,4 @@ def update_output(value):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)

@@ -44,6 +44,7 @@ class ImageByPerson(DataImage):
 
         self.person = person
         self.filepath = person.img_folder.joinpath(f"Person{person.id}_{id}")
+        self.imagepath = Path("../2AMV10/data/raw/").joinpath(f"Person{person.id}/Person{person.id}_{id}.jpg")
         self.githubURL = "https://raw.githubusercontent.com/rensoostenbach/2AMV10/olof"
         self.predictions = []
 
@@ -149,7 +150,7 @@ class ImageByPerson(DataImage):
     def getImageWithBoundingBoxesWithPredictionScoreAbove(self, confidence_threshold):
         valid_predictions = [prediction for prediction in self.predictions if prediction.score >= confidence_threshold]
 
-        with Image.open(self.filepath) as image:
+        with Image.open(self.imagepath) as image:
             return self.__drawBoundingBoxesForPredictionsOn(image, valid_predictions)
 
     def __drawBoundingBoxesForPredictionsOn(self, image, valid_predictions):

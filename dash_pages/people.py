@@ -124,7 +124,7 @@ def getGradcamImages(confidence_threshold, image, person):
     row_1 = html.Div(children=[
         html.Div(children=[
             html.Img(src=image.getImageWithBoundingBoxesWithPredictionScoreAbove(confidence_threshold),
-                     title=image.getCaption()),
+                     title=image.getCaption(), width=gradcam_img1.size[0], height=gradcam_img1.size[1]),
             html.P(image.getCaption())], style={'width': '48%', 'float': 'left'}),
         html.Div(children=[
             html.Img(src=gradcam_img1, title=f"Gradcam image of {person}, picture {image.id}"),
