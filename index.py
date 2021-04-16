@@ -98,5 +98,5 @@ def update_output(value):
 
 
 if __name__ == "__main__":
-    # app.config["suppress_callback_exceptions"] = True
-    app.run_server(debug=True)
+    app.config["suppress_callback_exceptions"] = True
+    app.run_server(debug=False)
