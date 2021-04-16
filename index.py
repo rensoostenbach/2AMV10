@@ -12,7 +12,6 @@ import sidebar
 
 from app import app
 
-# the styles for the main content position it to the right of the sidebar and
 # the styles for the main content position it to the right of the sidebar and add some padding.
 CONTENT_STYLE = {
     "margin-left": "32rem",
