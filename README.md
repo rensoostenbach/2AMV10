@@ -1,7 +1,7 @@
 # Visual Analytics group project - Group 4
 ## Installation
 
-Create a virtual environment with Python 3.8. This is done via the environment.yml file.
+Create a virtual environment with Python 3.8. This is done via the [2amv10_env.yml](2amv10_env.yml) file.
 Use the package manager [conda](https://docs.conda.io/en/latest/) to create the environment.
 
 ```bash
