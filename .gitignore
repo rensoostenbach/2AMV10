@@ -16,3 +16,4 @@ functions.py
 !yolov5l_weights.pt
 .ipynb_checkpoints
 *.pyc
+*.pyc
